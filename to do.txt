@@ -1,0 +1,3 @@
+1. import figma atoms .svg
+2. create xml layouts for each screen
+3. add button functionalities
