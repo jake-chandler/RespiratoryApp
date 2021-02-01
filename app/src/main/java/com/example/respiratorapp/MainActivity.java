@@ -29,9 +29,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         //change to home screen after 3 sec
-        //NOTE: while it could make more sense just to change the layout of this activity rather than
-        //making separate activities for the startup screen & the home screen, I chose the ladder option in order
-        //to start familiarizing myself with the Intent concept.
         (new Handler()).postDelayed(this::changeScreens,3000);
 
     }
