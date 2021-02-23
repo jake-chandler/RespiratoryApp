@@ -9,10 +9,13 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.NoActionBar">
-        <activity android:name=".AboutActivity"></activity>
-        <activity android:name=".ContributionsActivity"
-            android:parentActivityName=".HomeActivity"
-            />
+        <activity android:name=".FormActivity"></activity>
+        <activity android:name=".ResultsActivity" />
+        <activity android:name=".SettingsActivity" />
+        <activity android:name=".AboutActivity" />
+        <activity
+            android:name=".ContributionsActivity"
+            android:parentActivityName=".HomeActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
