@@ -31,16 +31,6 @@
         app:srcCompat="@drawable/green_check" />
 
     <ImageView
-        android:id="@+id/setting_cog"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="324dp"
-        android:layout_marginTop="8dp"
-        android:src="@drawable/settings_cog"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <ImageView
         android:id="@+id/imageView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
