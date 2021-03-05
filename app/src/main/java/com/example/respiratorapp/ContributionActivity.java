@@ -1,22 +1,18 @@
 package com.example.respiratorapp;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
 
-import androidx.appcompat.app.AppCompatActivity;
-
-/**
- * Represents a successful pair to the BLE MC.
- */
-public class PairedActivity extends AppCompatActivity {
+public class ContributionActivity extends Activity {
     private ImageView home_btn;
-
+    private ImageView settings_btn;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,16 +22,24 @@ public class PairedActivity extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-        setContentView(R.layout.activity_paired);
+        setContentView(R.layout.activity_contribution);
 
         initListeners();
     }
     protected void initListeners() {
-        home_btn = (ImageView) findViewById(R.id.home_btn);
+        home_btn = (ImageView) findViewById(R.id.imageView22);
+        settings_btn = (ImageView) findViewById(R.id.imageView23);
         home_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(PairedActivity.this, HomeActivity.class);
+                Intent intent = new Intent(ContributionActivity.this, HomeActivity.class);
+                startActivity(intent);
+            }
+        });
+        settings_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(ContributionActivity.this, SettingsActivity.class);
                 startActivity(intent);
             }
         });

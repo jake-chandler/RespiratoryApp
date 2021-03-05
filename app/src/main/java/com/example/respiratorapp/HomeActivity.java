@@ -41,6 +41,11 @@ public class HomeActivity extends Activity {
      */
     protected void initListeners(){
         pair_btn = (ImageView) findViewById(R.id.pair_btn);
+        contact_btn = (ImageView) findViewById(R.id.contact_btn);
+        help_btn = (ImageView) findViewById(R.id.imageView7);
+        settings_cog = (ImageView) findViewById(R.id.imageView10);
+        begin_test_btn = (ImageView) findViewById(R.id.imageView9);
+        prev_test_btn = (ImageView) findViewById(R.id.imageView8);
         pair_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -48,8 +53,42 @@ public class HomeActivity extends Activity {
                 startActivity(intent);
             }
         });
+        settings_cog.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(HomeActivity.this, SettingsActivity.class);
+                startActivity(intent);
+            }
+        });
+        contact_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(HomeActivity.this, ContributionActivity.class);
+                startActivity(intent);
+            }
+        });
+        help_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(HomeActivity.this, AboutActivity.class);
+                startActivity(intent);
+            }
+        });
+        begin_test_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(HomeActivity.this, FormActivity.class);
+                startActivity(intent);
+            }
+        });
+        prev_test_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(HomeActivity.this, ResultsActivity.class);
+                startActivity(intent);
+            }
+        });
     }
-
 
 
 }
