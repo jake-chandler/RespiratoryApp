@@ -42,10 +42,10 @@ public class HomeActivity extends Activity {
     protected void initListeners(){
         pair_btn = (ImageView) findViewById(R.id.pair_btn);
         contact_btn = (ImageView) findViewById(R.id.contact_btn);
-        help_btn = (ImageView) findViewById(R.id.imageView7);
-        settings_cog = (ImageView) findViewById(R.id.imageView10);
-        begin_test_btn = (ImageView) findViewById(R.id.imageView9);
-        prev_test_btn = (ImageView) findViewById(R.id.imageView8);
+        help_btn = (ImageView) findViewById(R.id.help_btn);
+        settings_cog = (ImageView) findViewById(R.id.settings_cog);
+        begin_test_btn = (ImageView) findViewById(R.id.begin_test_btn);
+        prev_test_btn = (ImageView) findViewById(R.id.view_prev_res_btn);
         pair_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -89,6 +89,4 @@ public class HomeActivity extends Activity {
             }
         });
     }
-
-
 }

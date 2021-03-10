@@ -26,8 +26,8 @@ public class AboutActivity extends AppCompatActivity {
     private ImageView home_btn;
     private ImageView settings_cog;
     protected void initListeners() {
-        home_btn = (ImageView) findViewById(R.id.imageView17);
-        settings_cog = (ImageView) findViewById(R.id.imageView19);
+        home_btn = (ImageView) findViewById(R.id.home);
+        settings_cog = (ImageView) findViewById(R.id.settings_cog);
         home_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -43,5 +43,4 @@ public class AboutActivity extends AppCompatActivity {
             }
         });
     }
-
 }

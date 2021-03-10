@@ -7,52 +7,98 @@
     tools:context=".ResultsActivity">
 
     <ImageView
-        android:id="@+id/imageView14"
+        android:id="@+id/background"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-
         android:scaleType="fitXY"
         android:src="@drawable/pixel_3_screen"
-        tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="0dp" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:layout_editor_absoluteY="173dp" />
 
     <ImageView
-        android:id="@+id/imageView18"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="624dp"
-        android:layout_marginEnd="28dp"
+        android:id="@+id/home"
+        android:layout_width="99dp"
+        android:layout_height="90dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="668dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/home_button" />
+
+    <ImageView
+        android:id="@+id/export_res"
+        android:layout_width="172dp"
+        android:layout_height="57dp"
+        android:layout_marginTop="700dp"
+        android:layout_marginEnd="24dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/export_results" />
 
     <ImageView
-        android:id="@+id/imageView29"
+        android:id="@+id/view_prev_res_dialog"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="26dp"
-        android:layout_marginTop="627dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/return_home" />
-
-    <ImageView
-        android:id="@+id/imageView30"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="115dp"
+        android:layout_marginTop="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/view_results" />
 
     <ImageView
-        android:id="@+id/imageView35"
+        android:id="@+id/prev_metric"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="303dp"
-        android:layout_marginEnd="42dp"
+        android:layout_marginTop="412dp"
+        android:layout_marginEnd="37dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/previous_metrics" />
+
+    <ScrollView
+        android:layout_width="384dp"
+        android:layout_height="260dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="152dp"
+        android:orientation="vertical"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <com.jjoe64.graphview.GraphView
+                android:id="@+id/graph"
+                android:layout_width="379dp"
+                android:layout_height="200dip"
+                android:layout_marginStart="4dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"/>
+
+            <com.jjoe64.graphview.GraphView
+                android:id="@+id/graph2"
+                android:layout_width="379dp"
+                android:layout_height="200dip"
+                android:layout_marginStart="4dp"
+                android:layout_marginTop="200dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"/>
+
+            <com.jjoe64.graphview.GraphView
+                android:id="@+id/graph3"
+                android:layout_width="379dp"
+                android:layout_height="200dip"
+                android:layout_marginStart="4dp"
+                android:layout_marginTop="200dp"
+                android:layout_marginBottom="40dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"/>
+        </LinearLayout>
+    </ScrollView>
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

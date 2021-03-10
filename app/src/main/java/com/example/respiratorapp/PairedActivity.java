@@ -15,8 +15,6 @@ import androidx.appcompat.app.AppCompatActivity;
  * Represents a successful pair to the BLE MC.
  */
 public class PairedActivity extends AppCompatActivity {
-    private ImageView home_btn;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,8 +28,9 @@ public class PairedActivity extends AppCompatActivity {
 
         initListeners();
     }
+    private ImageView home_btn;
     protected void initListeners() {
-        home_btn = (ImageView) findViewById(R.id.home_btn);
+        home_btn = (ImageView) findViewById(R.id.home);
         home_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
