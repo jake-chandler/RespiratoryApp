@@ -3,6 +3,7 @@ package com.example.respiratorapp;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.Window;
@@ -19,6 +20,10 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        if (!getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)){
+            // handle this later
+        }
         super.onCreate(savedInstanceState);
 
         //makes this activity full-screen (removes notification bar)
