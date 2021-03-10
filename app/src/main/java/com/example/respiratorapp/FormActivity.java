@@ -10,9 +10,6 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 
 public class FormActivity extends AppCompatActivity {
-
-    private ImageView home_btn;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,8 +24,9 @@ public class FormActivity extends AppCompatActivity {
         initListeners();
 
     }
+    private ImageView home_btn;
     protected void initListeners() {
-        home_btn = (ImageView) findViewById(R.id.imageView28);
+        home_btn = (ImageView) findViewById(R.id.home);
         home_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

@@ -59,5 +59,4 @@ public class PairingActivity extends Activity {
         Intent intent = new Intent(this, PairedActivity.class);
         startActivity(intent);
     }
-
 }
