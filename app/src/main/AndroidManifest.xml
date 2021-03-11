@@ -17,6 +17,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.NoActionBar">
+        <activity android:name=".ContributionActivity"></activity>
+        <activity android:name=".FormActivity" />
+        <activity android:name=".ResultsActivity" />
+        <activity android:name=".SettingsActivity" />
+        <activity android:name=".AboutActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -24,10 +29,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".HomeActivity">
-
-        </activity>
-
+        <activity android:name=".HomeActivity" />
+        <activity
+            android:name=".PairingActivity"
+            android:parentActivityName=".HomeActivity" />
+        <activity
+            android:name=".PairedActivity"
+            android:parentActivityName=".HomeActivity" />
     </application>
 
 </manifest>
