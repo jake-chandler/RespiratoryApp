@@ -5,7 +5,6 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCallback;
-import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothManager;
 import android.bluetooth.le.BluetoothLeScanner;
 import android.bluetooth.le.ScanCallback;
@@ -14,14 +13,11 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.ImageView;
+import android.util.Log;
 
 import androidx.annotation.RequiresApi;
-
-import java.util.List;
 
 /**
  * Represents the BLE pairing process. Attempts to pair to the MC.
@@ -31,6 +27,7 @@ public class PairingActivity extends Activity {
 
     /**
      * Request code for enabling bluetooth services.
+     *
      * @note check for consistency in the return method to verify successful enabling.
      */
     private static final int REQUEST_ENABLE_BT = 1;
@@ -79,14 +76,9 @@ public class PairingActivity extends Activity {
     private boolean deviceFound = false;
 
     /**
-     * True upon successful GATT connection, false otherwise.
-     */
-    private boolean devicePaired = false;
-
-    /**
      * Scanned devices.
      */
-    private BluetoothDevice[] devices = new BluetoothDevice[MAX_DEVICES];
+    private final BluetoothDevice[] devices = new BluetoothDevice[MAX_DEVICES];
 
     /**
      * The desired device to connect to.
@@ -99,10 +91,10 @@ public class PairingActivity extends Activity {
     private short deviceListIterator;
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        handler = new Handler();
 
         //makes this activity full-screen (removes notification bar)
         requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -118,58 +110,62 @@ public class PairingActivity extends Activity {
 
     /**
      * Sends GATT connection to 'TestingActivity' class.
-     * @return true on success, false otherwise.
+     *
      */
-    private boolean postGattConnection() {
+    private void postGattConnection() {
 
 
         // send GATT connection to
 
-        return true;
     }
 
     /**
      * @brief Helper method used to connect to MC via BLE
-     *
-     * @return false on pairing fail, true on pairing success
      */
-    private boolean pair() {
+    private void pair() {
+        Log.i("PAIRING","Beginning connection process...");
         deviceListIterator = 0;
 
         if (bleManager != null) {
             bleAdapter = bleManager.getAdapter();
+        } else {
+            Log.e("PAIRING", "Error. This device does not support BLE.");
         }
         if (bleAdapter != null && !bleAdapter.isEnabled()) {
             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-            return false;
+            return;
+        } else {
+            Log.e("PAIRING", "Error. Please enable Bluetooth on this device.");
         }
+
+        bleScanner = bleAdapter.getBluetoothLeScanner();
 
         scan();
 
+        boolean devicePaired;
         if (deviceFound) {
 
             // attempt to connect to GATT server.
             try {
-
                 bleGatt = bleDevice.connectGatt(this, false, gattCallback);
                 devicePaired = true;
+                Log.i("PAIRING", "Connected to GATT Server successfully.");
             } catch (Exception e) {
                 devicePaired = false;
-                System.out.println(e.getMessage());
+                Log.e("PAIRING", "Failure to connect to GATT Server.",e);
             }
 
             if (devicePaired) {
                 postGattConnection();
                 changeScreens();
             } else {
-                // Unsuccessful pair. TODO
+                Log.e("PAIRING", "Failure to connect to GATT Server.");
             }
         } else {
             // Device not found.
-            devicePaired = false;
+            Log.i("PAIRING", "UGA Sensor BLE device was not found.");
         }
-        return true;
     }
 
     /**
@@ -181,19 +177,17 @@ public class PairingActivity extends Activity {
     }
 
     /**
-     * Scans for the BLE devices for 10 seconds.
+     * Scans for the BLE device for 10 seconds.
      */
     private void scan() {
+        Log.i("PAIRING", "Now scanning for BLE devices...");
         if (bleScanner != null) {
             if (!scanning) {
 
                 // Stops scanning after a pre-defined scan period.
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        scanning = false;
-                        bleScanner.stopScan(scanCallback);
-                    }
+                handler.postDelayed(() -> {
+                    scanning = false;
+                    bleScanner.stopScan(scanCallback);
                 }, SCAN_TIME);
 
                 scanning = true;
@@ -203,18 +197,21 @@ public class PairingActivity extends Activity {
                 scanning = false;
                 bleScanner.stopScan(scanCallback);
             }
+        } else {
+            Log.e("PAIRING", "Error with BLE scanner.");
         }
     }
 
     /**
      * Callback function that searches for the MC device upon a scan result.
      */
-    private ScanCallback scanCallback =
+    private final ScanCallback scanCallback =
             new ScanCallback() {
 
                 @Override
                 public void onScanResult(int callbackType, ScanResult result) {
                     super.onScanResult(callbackType, result);
+                    Log.i("PAIRING", "A new BLE device has been scanned.");
                     devices[deviceListIterator] = result.getDevice();
                     deviceListIterator++;
 
@@ -222,12 +219,13 @@ public class PairingActivity extends Activity {
                         if (devices[i].getName().equals(DEVICE_NAME)) {
                             bleDevice = devices[i];
                             deviceFound = true;
+                            Log.i("PAIRING", "The UGA HR, RR, AND B02 sensor device has been found");
                         }
                     }
 
                 }
             };
-    private BluetoothGattCallback gattCallback =
+    private final BluetoothGattCallback gattCallback =
             new BluetoothGattCallback() {
                 @Override
                 public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
