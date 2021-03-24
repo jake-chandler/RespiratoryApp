@@ -143,6 +143,9 @@ public class PairingActivity extends Activity {
 
         scan();
 
+    }
+
+    private void handleResults() {
         boolean devicePaired;
         if (deviceFound) {
 
@@ -187,15 +190,14 @@ public class PairingActivity extends Activity {
                 // Stops scanning after a pre-defined scan period.
                 handler.postDelayed(() -> {
                     scanning = false;
+                    Log.i("PAIRING", "Terminating the scanning procedure.");
                     bleScanner.stopScan(scanCallback);
+                    handleResults();
                 }, SCAN_TIME);
 
                 scanning = true;
                 bleScanner.startScan(scanCallback);
 
-            } else {
-                scanning = false;
-                bleScanner.stopScan(scanCallback);
             }
         } else {
             Log.e("PAIRING", "Error with BLE scanner.");
