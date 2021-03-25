@@ -24,6 +24,8 @@ public class MainActivity extends AppCompatActivity {
         }
         super.onCreate(savedInstanceState);
 
+
+
         //makes this activity full-screen (removes notification bar)
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,

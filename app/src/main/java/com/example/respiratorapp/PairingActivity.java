@@ -152,6 +152,10 @@ public class PairingActivity extends Activity {
             // attempt to connect to GATT server.
             try {
                 bleGatt = bleDevice.connectGatt(this, false, gattCallback);
+                Intent i = new Intent(this, PairingActivity.class);
+                bleGatt.write
+                bleGatt.getServices();
+
                 devicePaired = true;
                 Log.i("PAIRING", "Connected to GATT Server successfully.");
             } catch (Exception e) {
@@ -214,15 +218,10 @@ public class PairingActivity extends Activity {
                 public void onScanResult(int callbackType, ScanResult result) {
                     super.onScanResult(callbackType, result);
                     Log.i("PAIRING", "A new BLE device has been scanned.");
-                    devices[deviceListIterator] = result.getDevice();
-                    deviceListIterator++;
 
-                    for (short i = 0; i < deviceListIterator; i++) {
-                        if (devices[i].getName().equals(DEVICE_NAME)) {
-                            bleDevice = devices[i];
-                            deviceFound = true;
-                            Log.i("PAIRING", "The UGA HR, RR, AND B02 sensor device has been found");
-                        }
+                    if (result.getDevice().getName().equals(DEVICE_NAME)) {
+                        bleDevice = result.getDevice();
+                        Log.i("PAIRING", "Device has been found.");
                     }
 
                 }
