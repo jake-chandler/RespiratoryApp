@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Test3Activity">
+
+    <ImageView
+        android:id="@+id/background"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="fitXY"
+        android:src="@drawable/pixel_3_screen"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:layout_editor_absoluteY="173dp" />
+
+    <ImageView
+        android:id="@+id/breath_sounds"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="79dp"
+        android:layout_marginTop="120dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/breath_sounds" />
+
+    <com.jjoe64.graphview.GraphView
+        android:id="@+id/breath_graph"
+        android:layout_width="379dp"
+        android:layout_height="200dip"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="225dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/retry_btn"
+        android:layout_width="76dp"
+        android:layout_height="70dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="606dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/retry" />
+
+    <ImageView
+        android:id="@+id/next_btn"
+        android:layout_width="75dp"
+        android:layout_height="77dp"
+        android:layout_marginTop="603dp"
+        android:layout_marginEnd="52dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/green_arrow" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

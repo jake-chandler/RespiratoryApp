@@ -2,6 +2,7 @@ package com.example.respiratorapp;
 
 import android.content.Context;
 import android.os.Build;
+import android.util.Log;
 
 import androidx.annotation.RequiresApi;
 
@@ -94,49 +95,50 @@ public class RespiratoryUser {
      *                              to be obtained by the retrieveUser method.
      */
     public RespiratoryUser(String RespiratoryUserString) {
-        String delim = "[ ]+";
+        String delim = "[ ,]+";
 
         String[] info = RespiratoryUserString.split(delim);
 
         username = info[0];
-        password = info[2];
-        name = info[3];
-        age = Integer.parseInt(info[6]);
-        height = Integer.parseInt(info[7]);
-        weight = Integer.parseInt(info[8]);
+        password = info[1];
+        name = info[2];
+        age = Integer.parseInt(info[5]);
+        height = Integer.parseInt(info[6]);
+        weight = Integer.parseInt(info[7]);
 
-        switch (info[4]) {
-            case "Sex.MALE":
+        switch (info[3]) {
+            case "MALE":
                 sex = Sex.MALE;
                 break;
-            case "Sex.FEMALE":
+            case "FEMALE":
                 sex = Sex.FEMALE;
                 break;
         }
 
-        switch (info[5]) {
-            case "ActivityLevel.LOW":
+        switch (info[4]) {
+            case "LOW":
                 activityLevel = ActivityLevel.LOW;
                 break;
-            case "ActivityLevel.MODERATE":
+            case "MODERATE":
                 activityLevel = ActivityLevel.MODERATE;
                 break;
-            case "ActivityLevel.HIGH":
-                activityLevel = activityLevel.HIGH;
+            case "HIGH":
+                activityLevel = ActivityLevel.HIGH;
                 break;
         }
 
-        int start = RespiratoryUserString.indexOf('[');
+        /*int start = RespiratoryUserString.indexOf('[');
         int end = RespiratoryUserString.indexOf(']');
         String testListString = RespiratoryUserString.substring(start + 1, end);
 
-        delim = "[ ,]+";
-        info = testListString.split(delim);
+        if (!(testListString == null || start < 0 || end < 0)) {
+            delim = "[ ,]+";
+            info = testListString.split(delim);
 
-        for (int i = 0; i < info.length ; i++) {
-            testResultsList.add(info[i]);
-        }
-
+            for (int i = 0; i < info.length ; i++) {
+                testResultsList.add(info[i]);
+            }
+        }*/
     }
 
     /**
@@ -171,7 +173,7 @@ public class RespiratoryUser {
         try (BufferedReader reader = new BufferedReader(inputStreamReader)) {
             String line = reader.readLine();
             while (line != null) {
-                stringBuilder.append(line).append('\n');
+                stringBuilder.append(line).append("");
                 line = reader.readLine();
             }
         } catch (IOException e) {
@@ -193,8 +195,14 @@ public class RespiratoryUser {
 
     @Override
     public String toString() {
-        return username + " " + password + " " + name + " " + sex +
-                " " + activityLevel + " " + age + " " + height + " " + weight + " " +testResultsList.toString();
+        if (testResultsList == null) {
+            return username + " " + password + " " + name + " " + sex +
+                    " " + activityLevel + " " + age + " " + height + " " + weight;
+        }
+        else {
+            return username + " " + password + " " + name + " " + sex +
+                " " + activityLevel + " " + age + " " + height + " " + weight + " " + testResultsList;
+        }
     }
 
     /**
@@ -210,9 +218,6 @@ public class RespiratoryUser {
     public ActivityLevel getActivityLevel() { return activityLevel; }
     public Sex getSex() { return sex; }
     public List<String> getTestResultsList() { return testResultsList; }
-
-
-
 
 
 

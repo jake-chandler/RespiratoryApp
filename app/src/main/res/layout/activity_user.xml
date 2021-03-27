@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".UserActivity">
+
+    <ImageView
+        android:id="@+id/background"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+
+        android:scaleType="fitXY"
+        android:src="@drawable/pixel_3_screen"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="0dp" />
+
+    <ImageView
+        android:id="@+id/exist_usr"
+        android:layout_width="133dp"
+        android:layout_height="373dp"
+        android:layout_marginStart="139dp"
+        android:layout_marginBottom="358dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/new_user" />
+
+    <ImageView
+        android:id="@+id/existing_usr_btn"
+        android:layout_width="188dp"
+        android:layout_height="73dp"
+        android:layout_marginStart="111dp"
+        android:layout_marginBottom="398dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/existing_user_btn" />
+
+    <ImageView
+        android:id="@+id/new_usr"
+        android:layout_width="133dp"
+        android:layout_height="373dp"
+        android:layout_marginStart="139dp"
+        android:layout_marginBottom="61dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/existing_user" />
+
+    <ImageView
+        android:id="@+id/new_usr_btn"
+        android:layout_width="187dp"
+        android:layout_height="72dp"
+        android:layout_marginStart="112dp"
+        android:layout_marginBottom="93dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/new_usr_btn" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

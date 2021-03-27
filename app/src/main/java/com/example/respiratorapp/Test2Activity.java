@@ -1,20 +1,18 @@
 package com.example.respiratorapp;
 
-import android.app.Activity;
+import androidx.appcompat.app.AppCompatActivity;
+
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
 
-import androidx.appcompat.app.AppCompatActivity;
+public class Test2Activity extends AppCompatActivity {
+    private ImageView next;
+    private ImageView retry;
 
-/**
- * Represents a successful pair to the BLE MC.
- */
-public class PairedActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -24,17 +22,26 @@ public class PairedActivity extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-        setContentView(R.layout.activity_paired);
+        setContentView(R.layout.activity_test2);
 
         initListeners();
+
     }
-    private ImageView homeButton;
+
     protected void initListeners() {
-        homeButton = (ImageView) findViewById(R.id.home);
-        homeButton.setOnClickListener(new View.OnClickListener() {
+        next = (ImageView) findViewById(R.id.next_btn);
+        retry = (ImageView) findViewById(R.id.retry_btn);
+        next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(PairedActivity.this, HomeActivity.class);
+                Intent intent = new Intent(Test2Activity.this, Test3Activity.class);
+                startActivity(intent);
+            }
+        });
+        retry.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(Test2Activity.this, Test2Activity.class);
                 startActivity(intent);
             }
         });

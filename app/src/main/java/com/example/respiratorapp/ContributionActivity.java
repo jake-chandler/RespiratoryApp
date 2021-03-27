@@ -24,19 +24,19 @@ public class ContributionActivity extends Activity {
 
         initListeners();
     }
-    private ImageView home_btn;
-    private ImageView settings_btn;
+    private ImageView homeButton;
+    private ImageView settingsButton;
     protected void initListeners() {
-        home_btn = (ImageView) findViewById(R.id.home);
-        settings_btn = (ImageView) findViewById(R.id.settings_cog);
-        home_btn.setOnClickListener(new View.OnClickListener() {
+        homeButton = (ImageView) findViewById(R.id.home);
+        settingsButton = (ImageView) findViewById(R.id.settings_cog);
+        homeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(ContributionActivity.this, HomeActivity.class);
                 startActivity(intent);
             }
         });
-        settings_btn.setOnClickListener(new View.OnClickListener() {
+        settingsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(ContributionActivity.this, SettingsActivity.class);
