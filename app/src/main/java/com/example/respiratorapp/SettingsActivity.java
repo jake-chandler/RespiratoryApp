@@ -10,7 +10,6 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 
 public class SettingsActivity extends AppCompatActivity {
-    private ImageView home_btn;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -24,9 +23,10 @@ public class SettingsActivity extends AppCompatActivity {
 
         initListeners();
     }
+    private ImageView homeButton;
     protected void initListeners() {
-        home_btn = (ImageView) findViewById(R.id.imageView26);
-        home_btn.setOnClickListener(new View.OnClickListener() {
+        homeButton = (ImageView) findViewById(R.id.home);
+        homeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(SettingsActivity.this, HomeActivity.class);

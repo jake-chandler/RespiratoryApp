@@ -11,8 +11,6 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 
 public class ContributionActivity extends Activity {
-    private ImageView home_btn;
-    private ImageView settings_btn;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,17 +24,19 @@ public class ContributionActivity extends Activity {
 
         initListeners();
     }
+    private ImageView homeButton;
+    private ImageView settingsButton;
     protected void initListeners() {
-        home_btn = (ImageView) findViewById(R.id.imageView22);
-        settings_btn = (ImageView) findViewById(R.id.imageView23);
-        home_btn.setOnClickListener(new View.OnClickListener() {
+        homeButton = (ImageView) findViewById(R.id.home);
+        settingsButton = (ImageView) findViewById(R.id.settings_cog);
+        homeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(ContributionActivity.this, HomeActivity.class);
                 startActivity(intent);
             }
         });
-        settings_btn.setOnClickListener(new View.OnClickListener() {
+        settingsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(ContributionActivity.this, SettingsActivity.class);

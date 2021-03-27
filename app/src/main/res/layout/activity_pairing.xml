@@ -7,7 +7,7 @@
     tools:context=".PairingActivity">
 
     <ImageView
-        android:id="@+id/imageView3"
+        android:id="@+id/background"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
 
@@ -17,25 +17,28 @@
         tools:layout_editor_absoluteY="0dp" />
 
     <ImageView
-        android:id="@+id/imageView2"
+        android:id="@+id/red_x"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="99dp"
+        android:layout_marginTop="314dp"
         android:layout_marginEnd="87dp"
-        android:layout_marginBottom="176dp"
+        android:layout_marginBottom="192dp"
         android:src="@drawable/red_x"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
-        android:id="@+id/imageView21"
+        android:id="@+id/please_wait"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="89dp"
-        android:src="@drawable/pleasewaitdialog"
+        android:layout_marginTop="40dp"
+        android:src="@drawable/please_wait_dialog"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.494"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
