@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
      * @return void
      */
     public void changeScreens(){
-        Intent intent = new Intent(MainActivity.this, HomeActivity.class);
+        Intent intent = new Intent(MainActivity.this, UserActivity.class);
         startActivity(intent);
     }
 }

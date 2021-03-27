@@ -2,7 +2,6 @@ package com.example.respiratorapp;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -10,7 +9,11 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
 
-public class AboutActivity extends AppCompatActivity {
+public class TestActivity extends AppCompatActivity {
+
+    private ImageView next;
+    private ImageView retry;
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
@@ -19,26 +22,28 @@ public class AboutActivity extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-        setContentView(R.layout.activity_about);
+        setContentView(R.layout.activity_test);
 
         initListeners();
+
     }
-    private ImageView home_btn;
-    private ImageView settings_cog;
+
     protected void initListeners() {
-        home_btn = (ImageView) findViewById(R.id.home);
-        settings_cog = (ImageView) findViewById(R.id.settings_cog);
-        home_btn.setOnClickListener(new View.OnClickListener() {
+        next = (ImageView) findViewById(R.id.next_btn);
+        retry = (ImageView) findViewById(R.id.retry_btn);
+        next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(AboutActivity.this, HomeActivity.class);
+                Intent intent = new Intent(TestActivity.this, Test2Activity.class);
                 startActivity(intent);
+                //setContentView(R.layout.activity_test2);
             }
         });
-        settings_cog.setOnClickListener(new View.OnClickListener() {
+
+        retry.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(AboutActivity.this, SettingsActivity.class);
+                Intent intent = new Intent(TestActivity.this, TestActivity.class);
                 startActivity(intent);
             }
         });

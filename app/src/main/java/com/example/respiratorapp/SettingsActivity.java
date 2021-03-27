@@ -23,10 +23,10 @@ public class SettingsActivity extends AppCompatActivity {
 
         initListeners();
     }
-    private ImageView home_btn;
+    private ImageView homeButton;
     protected void initListeners() {
-        home_btn = (ImageView) findViewById(R.id.home);
-        home_btn.setOnClickListener(new View.OnClickListener() {
+        homeButton = (ImageView) findViewById(R.id.home);
+        homeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(SettingsActivity.this, HomeActivity.class);

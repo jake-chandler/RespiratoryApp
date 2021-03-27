@@ -19,7 +19,7 @@ import com.jjoe64.graphview.series.PointsGraphSeries;
 
 public class ResultsActivity<series> extends AppCompatActivity {
 
-    private ImageView home_btn;
+    private ImageView homeButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,8 +82,8 @@ public class ResultsActivity<series> extends AppCompatActivity {
     }
 
     protected void initListeners() {
-        home_btn = (ImageView) findViewById(R.id.home);
-        home_btn.setOnClickListener(new View.OnClickListener() {
+        homeButton = (ImageView) findViewById(R.id.home);
+        homeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(ResultsActivity.this, HomeActivity.class);
