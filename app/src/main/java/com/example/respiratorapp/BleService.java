@@ -24,6 +24,7 @@ import android.util.Log;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
+import java.util.Calendar;
 import java.util.List;
 
 @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -63,6 +64,16 @@ public class BleService extends Service {
      * Time to scan for device in milliseconds.
      */
     private static final long SCAN_TIME = 5000;
+
+    /**
+     * Time to sample measurement values.
+     */
+    private static final long SAMPLE_TIME = 10000;
+
+    /**
+     * The number of measurements to collect.
+     */
+    private static final int NUM_MEASUREMENTS = 100;
 
     /**
      * BLE Manager for adapter retrieval.
@@ -119,20 +130,46 @@ public class BleService extends Service {
      */
     private int hrVal, rrVal;
 
+    private int [] rrMeasurements, hrMeasurements = new int [NUM_MEASUREMENTS];
+
     /**
-     * Getters and setters.
+     * Class used for the client Binder.
      */
-    public int getHrVal() {
-        return hrVal;
+    public class BleServiceBinder extends Binder {
+        BleService getService() {
+            // return instance of BleServiceBinder so clients can call public methods
+            return BleService.this;
+        }
     }
-    public int getRrVal() {
-        return rrVal;
-    }
+
+    /**
+     * Used to set the context of the activity this Service is started in.
+     * @param context The context the service is started in
+     * @note context is expected to be the PairingActivity context.
+     */
     public void setContext(Context context) {
         this.context = context;
     }
     public void setActivity(Activity activity) {
         this.activity = activity;
+    }
+
+    /**
+     * Used to obtain a sample of Heart Rate measurements.
+     * @return The Heart Rate measurements.
+     */
+    public int[] collectHrMeasurements() {
+        long startTime = Calendar.getInstance().getTimeInMillis(), endTime;
+        int i = 0;
+        do {
+            if (i == NUM_MEASUREMENTS) {
+              return hrMeasurements;
+            }
+            hrMeasurements[i] = hrVal;
+            i++;
+            endTime = Calendar.getInstance().getTimeInMillis();
+        } while (endTime - startTime < SAMPLE_TIME);
+        return hrMeasurements;
     }
 
     /**
@@ -142,6 +179,12 @@ public class BleService extends Service {
      *            to turn off notifications.
      */
     public void notifyHR(byte[] val) {
+        if (val == BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE) {
+            bleGatt.setCharacteristicNotification(hrDescriptor.getCharacteristic(), true);
+        }
+        else if (val == BluetoothGattDescriptor.DISABLE_NOTIFICATION_VALUE) {
+            bleGatt.setCharacteristicNotification(hrDescriptor.getCharacteristic(), false);
+        }
         hrDescriptor.setValue(val);
         bleGatt.writeDescriptor(hrDescriptor);
         Log.i(LOGGER_INFO, "Changing heart rate notifications.");
@@ -154,19 +197,15 @@ public class BleService extends Service {
      *            to turn off notifications.
      */
     public void notifyRR(byte[] val) {
+        if (val == BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE) {
+            bleGatt.setCharacteristicNotification(rrDescriptor.getCharacteristic(), true);
+        }
+        else if (val == BluetoothGattDescriptor.DISABLE_NOTIFICATION_VALUE) {
+            bleGatt.setCharacteristicNotification(rrDescriptor.getCharacteristic(), false);
+        }
         rrDescriptor.setValue(val);
         bleGatt.writeDescriptor(rrDescriptor);
         Log.i(LOGGER_INFO, "Changing respiratory rate notifications.");
-    }
-
-    /**
-     * Class used for the client Binder.
-     */
-    public class BleServiceBinder extends Binder {
-        BleService getService() {
-            // return instance of BleServiceBinder so clients can call public methods
-            return BleService.this;
-        }
     }
 
     @Nullable
@@ -249,10 +288,8 @@ public class BleService extends Service {
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private void scan(Context context) {
         Log.i(LOGGER_INFO, "Now scanning for BLE devices...");
-
         if (bleScanner != null) {
             if (!scanning) {
-
                 // Stops scanning after a pre-defined scan period.
                 handler.postDelayed(() -> {
                     scanning = false;
@@ -263,14 +300,75 @@ public class BleService extends Service {
 
                 scanning = true;
                 bleScanner.startScan(scanCallback);
-
             }
         } else {
             Log.e(LOGGER_INFO, "Error with BLE scanner.");
         }
+    }
+
+
+    /**
+     * Helper method used to obtain the BluetoothGattDescriptor for for HR, RR, and B02 characteristics from the offered services
+     * @param services The services offered by the UGA sensor device.
+     */
+    private void findServices(List<BluetoothGattService> services) {
+        for (BluetoothGattService service : services) {
+            List<BluetoothGattCharacteristic> characteristics = service.getCharacteristics();
+            for (BluetoothGattCharacteristic characteristic : characteristics) {
+                if (characteristic.getUuid().toString().equals(UUID_HR)) {
+                    BluetoothGattDescriptor descriptor =
+                            characteristic.getDescriptor(characteristic.getDescriptors().get(0).getUuid());
+                    hrDescriptor = descriptor;
+                }
+                if (characteristic.getUuid().toString().equals(UUID_RR)) {
+                    bleGatt.setCharacteristicNotification(characteristic, true);
+                    BluetoothGattDescriptor descriptor =
+                            characteristic.getDescriptor(characteristic.getDescriptors().get(0).getUuid());
+                    rrDescriptor = descriptor;
+                }
+            }
+        }
 
     }
 
+    /**
+     * Callbacks for Ble GATT events.
+     */
+    private final BluetoothGattCallback gattCallback =
+            new BluetoothGattCallback() {
+                @Override
+                public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
+                    super.onConnectionStateChange(gatt, status, newState);
+                }
+
+                @Override
+                public void onServicesDiscovered(BluetoothGatt gatt, int status) {
+                    super.onServicesDiscovered(gatt, status);
+                    Log.i(LOGGER_INFO, "Services discovered.");
+                    findServices(bleGatt.getServices());
+
+                    Intent intent = new Intent(activity, PairedActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                }
+
+                @Override
+                public void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
+                    super.onCharacteristicChanged(gatt, characteristic);
+                    if (characteristic.getUuid().toString().equals(UUID_HR)) {
+                        // Update heart rate value.
+                        hrVal = characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT8, 1);
+                    }
+                    if (characteristic.getUuid().toString().equals(UUID_RR)) {
+                        // Update respiratory rate value.
+                        rrVal = characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT8, 1);
+                    }
+                }
+            };
+
+    /**
+     * Callbacks for android BluetoothManager scanning events.
+     */
     private final ScanCallback scanCallback = new ScanCallback() {
         @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
         @Override
@@ -285,69 +383,5 @@ public class BleService extends Service {
 
         }
     };
-
-    private void setNotificationsEnabled(List<BluetoothGattService> services) {
-        Log.i(LOGGER_INFO, "Enabling updates for service characteristics.");
-        for (BluetoothGattService service : services) {
-            List<BluetoothGattCharacteristic> characteristics = service.getCharacteristics();
-            for (BluetoothGattCharacteristic characteristic : characteristics) {
-                if (characteristic.getUuid().toString().equals(UUID_HR)) {
-                    bleGatt.setCharacteristicNotification(characteristic, true);
-                    BluetoothGattDescriptor descriptor =
-                            characteristic.getDescriptor(characteristic.getDescriptors().get(0).getUuid());
-                    hrDescriptor = descriptor;
-                    descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
-                    bleGatt.writeDescriptor(descriptor);
-                    Log.i(LOGGER_INFO, "Notifications enabled for Heart Rate.");
-                }
-                if (characteristic.getUuid().toString().equals(UUID_RR)) {
-                    bleGatt.setCharacteristicNotification(characteristic, true);
-                    BluetoothGattDescriptor descriptor =
-                            characteristic.getDescriptor(characteristic.getDescriptors().get(0).getUuid());
-                    rrDescriptor = descriptor;
-                    descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
-                    bleGatt.writeDescriptor(descriptor);
-                    Log.i(LOGGER_INFO, "Notifications enabled for Respiratory Rate.");
-                }
-            }
-        }
-
-    }
-
-    private final BluetoothGattCallback gattCallback =
-            new BluetoothGattCallback() {
-                @Override
-                public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
-                    super.onConnectionStateChange(gatt, status, newState);
-                }
-
-                @Override
-                public void onServicesDiscovered(BluetoothGatt gatt, int status) {
-                    super.onServicesDiscovered(gatt, status);
-                    Log.i(LOGGER_INFO, "Services discovered.");
-                    setNotificationsEnabled(bleGatt.getServices());
-
-                    Intent intent = new Intent(activity, PairedActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent);
-                }
-
-                @Override
-                public void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
-                    super.onCharacteristicChanged(gatt, characteristic);
-                    if (characteristic.getUuid().toString().equals(UUID_HR)) {
-                        Log.i(LOGGER_INFO, "Heart rate characteristic changed.");
-                        hrVal = characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT8, 1);
-                        Log.i(LOGGER_INFO, "New HR Value: " + hrVal);
-                    }
-                    if (characteristic.getUuid().toString().equals(UUID_RR)) {
-                        Log.i(LOGGER_INFO, "Respiratory rate characteristic changed.");
-                        rrVal = characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT8, 1);
-                        Log.i(LOGGER_INFO, "New RR Value: " + rrVal);
-                    }
-
-
-                }
-            };
 
 }
