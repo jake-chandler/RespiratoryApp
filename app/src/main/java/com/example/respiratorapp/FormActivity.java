@@ -102,7 +102,7 @@ public class FormActivity extends AppCompatActivity {
                 catch  (IOException e) {
                     Log.i("FORM", "An exception has occurred.");
                 }
-                Intent intent = new Intent(FormActivity.this, LoginActivity.class);
+                Intent intent = new Intent(FormActivity.this, HomeActivity.class);
                 startActivity(intent);
             }
         });
