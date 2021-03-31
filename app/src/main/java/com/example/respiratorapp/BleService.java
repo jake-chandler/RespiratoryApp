@@ -130,7 +130,15 @@ public class BleService extends Service {
      */
     private int hrVal, rrVal;
 
-    private int [] rrMeasurements, hrMeasurements = new int [NUM_MEASUREMENTS];
+    private int [][] rrMeasurements, hrMeasurements = new int [NUM_MEASUREMENTS][2];
+
+    public void setHRMeasurement( int[][] arr) {
+        this.hrMeasurements = arr;
+    }
+
+    public int[][] getHRMeasurement(){
+        return this.hrMeasurements;
+    }
 
     /**
      * Class used for the client Binder.
@@ -154,23 +162,14 @@ public class BleService extends Service {
         this.activity = activity;
     }
 
-    /**
-     * Used to obtain a sample of Heart Rate measurements.
-     * @return The Heart Rate measurements.
-     */
-    public int[] collectHrMeasurements() {
-        long startTime = Calendar.getInstance().getTimeInMillis(), endTime;
-        int i = 0;
-        do {
-            if (i == NUM_MEASUREMENTS) {
-              return hrMeasurements;
-            }
-            hrMeasurements[i] = hrVal;
-            i++;
-            endTime = Calendar.getInstance().getTimeInMillis();
-        } while (endTime - startTime < SAMPLE_TIME);
-        return hrMeasurements;
+    public int getHrVal(){
+        return this.hrVal;
     }
+
+    public int getRrVal(){
+        return this.rrVal;
+    }
+
 
     /**
      * Notifies the BLE Device to update for HR measurements.
