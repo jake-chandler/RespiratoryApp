@@ -34,7 +34,7 @@ public class Test3Activity extends AppCompatActivity {
         next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(Test3Activity.this, HomeActivity.class);
+                Intent intent = new Intent(Test3Activity.this, RiskAssessmentActivity.class);
                 startActivity(intent);
             }
         });

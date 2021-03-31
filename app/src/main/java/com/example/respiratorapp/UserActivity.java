@@ -9,6 +9,9 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
 
+ /**
+  * Represents the BLE pairing process. Attempts to pair to the MC.
+  */
 public class UserActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {

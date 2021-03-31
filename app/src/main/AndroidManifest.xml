@@ -17,7 +17,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.NoActionBar">
-        <activity android:name=".LoginActivity"></activity>
+        <activity android:name=".RiskAssessmentActivity"></activity>
+        <activity android:name=".LoginActivity" />
         <activity android:name=".UserActivity" />
         <activity android:name=".Test3Activity" />
         <activity android:name=".Test2Activity" />

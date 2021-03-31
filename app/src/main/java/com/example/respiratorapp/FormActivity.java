@@ -17,6 +17,9 @@ import android.widget.Spinner;
 
 import java.io.IOException;
 
+/**
+ * @brief Represents the form screen of our applications
+ */
 public class FormActivity extends AppCompatActivity {
     private EditText name;
     private EditText age;
@@ -26,6 +29,8 @@ public class FormActivity extends AppCompatActivity {
     private Spinner activityLevel;
     private EditText username;
     private EditText password;
+    private ImageView submitButton;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,6 +44,9 @@ public class FormActivity extends AppCompatActivity {
 
         initListeners();
 
+    }
+
+    protected void initListeners() {
         name = (EditText) findViewById(R.id.editTextPersonName);
         age = (EditText) findViewById(R.id.editTextAge);
         activityLevel = (Spinner) findViewById(R.id.activitySpinner);
@@ -50,16 +58,15 @@ public class FormActivity extends AppCompatActivity {
 
         String[] activities = new String[]{"LOW", "MODERATE", "HIGH" };
         String[] sexes = new String[]{"MALE", "FEMALE"};
+        //creates a dropdown menu with array contents of each string[]
         ArrayAdapter<String> activitiesAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, activities);
         ArrayAdapter<String> sexesAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, sexes);
         activityLevel.setAdapter(activitiesAdapter);
         sex.setAdapter(sexesAdapter);
-    }
-
-    private ImageView submitButton;
-    protected void initListeners() {
         submitButton = (ImageView) findViewById(R.id.submit);
+
         submitButton.setOnClickListener(new View.OnClickListener() {
+
             @RequiresApi(api = Build.VERSION_CODES.KITKAT)
             @Override
             public void onClick(View view) {
@@ -71,7 +78,7 @@ public class FormActivity extends AppCompatActivity {
                 int heightValue = Integer.parseInt(height.getEditableText().toString());
                 int weightValue = Integer.parseInt(weight.getEditableText().toString());
 
-
+                //sets the selected drop down value to equal the switch for sex
                 RespiratoryUser.Sex sexValue;
                 if (sex.getSelectedItem().toString() == "MALE" ) {
                     sexValue = RespiratoryUser.Sex.MALE;
@@ -80,7 +87,7 @@ public class FormActivity extends AppCompatActivity {
                     sexValue = RespiratoryUser.Sex.FEMALE;
                 }
 
-
+                //sets the selected drop down value to equal the switch for ActivityLevel
                 RespiratoryUser.ActivityLevel activityLevelValue;
                 if (activityLevel.getSelectedItem().toString() == "LOW"){
                     activityLevelValue = RespiratoryUser.ActivityLevel.LOW;
@@ -92,7 +99,7 @@ public class FormActivity extends AppCompatActivity {
                     activityLevelValue = RespiratoryUser.ActivityLevel.HIGH;
                 }
 
-
+                //initializes a RespiratoryUser user to have the contents of the form page
                 RespiratoryUser user = new RespiratoryUser(usernameValue, passwordValue, nameValue,
                         sexValue, activityLevelValue, ageValue, heightValue, weightValue);
                 try{
@@ -100,9 +107,9 @@ public class FormActivity extends AppCompatActivity {
                 }
 
                 catch  (IOException e) {
-                    Log.i("FORM", "An exception has occurred.");
+                    Log.i("FORM", "An exception has occurred."); //catches an exception if the form is not filled properly
                 }
-                Intent intent = new Intent(FormActivity.this, LoginActivity.class);
+                Intent intent = new Intent(FormActivity.this, HomeActivity.class);
                 startActivity(intent);
             }
         });
