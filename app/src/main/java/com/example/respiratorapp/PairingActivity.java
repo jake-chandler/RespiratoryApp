@@ -32,11 +32,13 @@ import java.util.UUID;
 /**
  * Represents the BLE pairing process. Attempts to pair to the MC.
  */
+
 @RequiresApi(api = Build.VERSION_CODES.M)
 public class PairingActivity extends Activity {
 
     BleService svc;
     Activity activity = this;
+    ServiceConnection connection;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,39 +52,37 @@ public class PairingActivity extends Activity {
 
         setContentView(R.layout.activity_pairing);
 
-        Intent intent = new Intent (this, BleService.class);
+        Intent intent = new Intent(this, BleService.class);
+
 
         bindService(intent, connection, Context.BIND_AUTO_CREATE);
         Log.i("PAIRING", "4");
 
 
         /**
-        Intent intent = new Intent(PairingActivity.this, PairedActivity.class);
-        startActivity(intent);
+         Intent intent = new Intent(PairingActivity.this, PairedActivity.class);
+         startActivity(intent);
          */
 
 
+        ServiceConnection connection = new ServiceConnection() {
+
+            @Override
+            public void onServiceConnected(ComponentName name, IBinder service) {
+                Log.i("PAIRING", "Ble Service discovered.");
+                BleService.BleServiceBinder binder = (BleService.BleServiceBinder) service;
+                svc = binder.getService();
+                svc.setActivity(activity);
+                svc.setContext(getApplicationContext());
+                Intent intent = new Intent(activity, BleService.class);
+                startService(intent);
+
+            }
+
+            @Override
+            public void onServiceDisconnected(ComponentName name) {
+                Log.i("PAIRING", "Service unbounded from this activity.");
+            }
+        };
     }
-
-    private ServiceConnection connection = new ServiceConnection() {
-
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            Log.i("PAIRING", "Ble Service discovered.");
-            BleService.BleServiceBinder binder = (BleService.BleServiceBinder) service;
-            svc = binder.getService();
-            svc.setActivity(activity);
-            svc.setContext(getApplicationContext());
-            Intent intent = new Intent (activity, BleService.class);
-            startService(intent);
-
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            Log.i("PAIRING", "Service unbounded from this activity.");
-        }
-    };
-
-
 }

@@ -29,7 +29,7 @@ public class Test2Activity extends AppCompatActivity {
     private static final int NUM_MEASUREMENTS = 100;
     private ImageView next;
     private ImageView retry;
-    private GraphView respiratoryRateGraph;
+    private GraphView BO2Graph;
     BleService svc;
     Activity activity = this;
     private LineGraphSeries<DataPoint> series;
@@ -52,7 +52,7 @@ public class Test2Activity extends AppCompatActivity {
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     protected void collectMeasurements() throws InterruptedException {
-        respiratoryRateGraph = (GraphView) findViewById(R.id.breath_graph);
+        BO2Graph = (GraphView) findViewById(R.id.oxygen_graph);
         Intent intent = new Intent(this, BleService.class);
         bindService(intent, connection, Context.BIND_AUTO_CREATE);
 
@@ -60,7 +60,7 @@ public class Test2Activity extends AppCompatActivity {
 
         long startTime = Calendar.getInstance().getTimeInMillis();
         int i = 0;
-        int[][] rrMeasurements = new int[NUM_MEASUREMENTS][2];
+        int[][] bo2Measurements = new int[NUM_MEASUREMENTS][2];
 
         long endTime;
         do {
@@ -69,15 +69,15 @@ public class Test2Activity extends AppCompatActivity {
             if (i == NUM_MEASUREMENTS) {
                 break;
             }
-            rrMeasurements[i][1] = svc.getHrVal();
+            bo2Measurements[i][1] = svc.getHrVal();
             i++;
             endTime = Calendar.getInstance().getTimeInMillis();
             double x = (int) (endTime - startTime);
-            rrMeasurements[i][0] = (int) x;
-            double y = rrMeasurements[i][1];
+            bo2Measurements[i][0] = (int) x;
+            double y = bo2Measurements[i][1];
             series.appendData( new DataPoint( x, y ),true,NUM_MEASUREMENTS );
         } while (endTime - startTime < SAMPLE_TIME);
-        svc.setHRMeasurement( rrMeasurements );
+        svc.setBO2Measurements( bo2Measurements );
     }
 
     protected void initListeners() {
