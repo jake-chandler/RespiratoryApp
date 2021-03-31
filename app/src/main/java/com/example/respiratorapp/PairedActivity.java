@@ -23,10 +23,10 @@ import androidx.appcompat.app.AppCompatActivity;
  * Represents a successful pair to the BLE MC.
  */
 public class PairedActivity extends AppCompatActivity {
+
     private ImageView home_btn;
     BleService svc;
     Activity activity = this;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,9 +44,10 @@ public class PairedActivity extends AppCompatActivity {
 
         initListeners();
     }
+    private ImageView homeButton;
     protected void initListeners() {
-        home_btn = (ImageView) findViewById(R.id.home_btn);
-        home_btn.setOnClickListener(new View.OnClickListener() {
+        homeButton = (ImageView) findViewById(R.id.home);
+        homeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(PairedActivity.this, HomeActivity.class);

@@ -62,8 +62,6 @@ public class PairingActivity extends Activity {
          */
 
 
-    }
-
     private ServiceConnection connection = new ServiceConnection() {
 
         @Override
@@ -83,6 +81,5 @@ public class PairingActivity extends Activity {
             Log.i("PAIRING", "Service unbounded from this activity.");
         }
     };
-
 
 }

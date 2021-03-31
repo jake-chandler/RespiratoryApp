@@ -16,8 +16,6 @@ import android.view.WindowManager;
  * @Author Jake Chandler
  */
 public class MainActivity extends AppCompatActivity {
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -39,7 +37,6 @@ public class MainActivity extends AppCompatActivity {
         (new Handler()).postDelayed(this::changeScreens,3000);
 
     }
-
     /**
      * Helper method used to change to home screen
      *
@@ -47,9 +44,7 @@ public class MainActivity extends AppCompatActivity {
      * @return void
      */
     public void changeScreens(){
-        Intent intent = new Intent(MainActivity.this, HomeActivity.class);
+        Intent intent = new Intent(MainActivity.this, UserActivity.class);
         startActivity(intent);
     }
-
-
 }

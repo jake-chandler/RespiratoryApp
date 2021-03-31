@@ -17,11 +17,15 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.NoActionBar">
-        <activity android:name=".ContributionActivity"></activity>
+        <activity android:name=".LoginActivity"></activity>
+        <activity android:name=".UserActivity" />
+        <activity android:name=".Test3Activity" />
+        <activity android:name=".Test2Activity" />
+        <activity android:name=".TestActivity" />
+        <activity android:name=".ContributionActivity" />
         <activity android:name=".FormActivity" />
         <activity android:name=".ResultsActivity" />
         <activity android:name=".SettingsActivity" />
-        <activity android:name=".AboutActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
