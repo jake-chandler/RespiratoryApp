@@ -36,9 +36,6 @@ public class HomeActivity extends Activity {
 
     }
 
-    /**
-     *  Initializes onClickListener for each button on the home screen
-     */
     protected void initListeners(){
         pairButton = (ImageView) findViewById(R.id.pair_btn);
         contactButton = (ImageView) findViewById(R.id.contact_btn);
