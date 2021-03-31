@@ -40,7 +40,9 @@ public class RespiratoryUser {
      */
     private ActivityLevel activityLevel;
 
-    /** This lists of tests (identified by test ID) this user has completed */
+    /**
+     * This lists of tests (identified by test ID) this user has completed
+     */
     private List<String> testResultsList;
 
     /**
@@ -69,14 +71,15 @@ public class RespiratoryUser {
 
     /**
      * Constructor used to create a new user.
-     * @param username The username
-     * @param password The password
-     * @param name The first and last name
-     * @param sex The biological sex
+     *
+     * @param username      The username
+     * @param password      The password
+     * @param name          The first and last name
+     * @param sex           The biological sex
      * @param activityLevel The activity level
-     * @param age The age (years)
-     * @param height The height (cm)
-     * @param weight The weight (kg)
+     * @param age           The age (years)
+     * @param height        The height (cm)
+     * @param weight        The weight (kg)
      */
     RespiratoryUser(String username, String password, String name, Sex sex, ActivityLevel activityLevel, int age, int height, int weight) {
         this.username = username;
@@ -91,6 +94,7 @@ public class RespiratoryUser {
 
     /**
      * Constructor for retrieving an already existing user
+     *
      * @param RespiratoryUserString The string representing the Respiratory User,
      *                              to be obtained by the retrieveUser method.
      */
@@ -127,22 +131,25 @@ public class RespiratoryUser {
                 break;
         }
 
-        /*int start = RespiratoryUserString.indexOf('[');
+        int start = RespiratoryUserString.indexOf('[');
         int end = RespiratoryUserString.indexOf(']');
-        String testListString = RespiratoryUserString.substring(start + 1, end);
 
-        if (!(testListString == null || start < 0 || end < 0)) {
+        // if the testResultsList is empty, start and end should be -1
+        if (start != -1 && end != -1) {
+            String testListString = RespiratoryUserString.substring(start + 1, end);
             delim = "[ ,]+";
             info = testListString.split(delim);
 
-            for (int i = 0; i < info.length ; i++) {
+            for (int i = 0; i < info.length; i++) {
                 testResultsList.add(info[i]);
             }
-        }*/
+        }
+
     }
 
     /**
      * Saves this User information to phone storage.
+     *
      * @param context The Activity Context calling this method.
      * @throws IOException Will throw this on file creation error
      */
@@ -151,15 +158,15 @@ public class RespiratoryUser {
         String fileContents = this.toString();
         try (FileOutputStream fos = context.openFileOutput(filename, Context.MODE_PRIVATE)) {
             fos.write(fileContents.getBytes());
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw e;
         }
     }
 
     /**
      * Retrieves the String contents of a particular RespiratoryUser from saved data.
-     * @param context The context calling this method.
+     *
+     * @param context  The context calling this method.
      * @param username The username of the RepsiratoryUser to retrieve
      * @return The String RespiratoryUserString
      * @throws FileNotFoundException If file does not exist
@@ -187,9 +194,10 @@ public class RespiratoryUser {
 
     /**
      * Registers a test results object to this user
+     *
      * @param id
      */
-    public void addTestResult(String id){
+    public void addTestResult(String id) {
         testResultsList.add(id);
     }
 
@@ -198,27 +206,52 @@ public class RespiratoryUser {
         if (testResultsList == null) {
             return username + " " + password + " " + name + " " + sex +
                     " " + activityLevel + " " + age + " " + height + " " + weight;
-        }
-        else {
+        } else {
             return username + " " + password + " " + name + " " + sex +
-                " " + activityLevel + " " + age + " " + height + " " + weight + " " + testResultsList;
+                    " " + activityLevel + " " + age + " " + height + " " + weight + " " + testResultsList;
         }
     }
 
     /**
      * Getters for class fields.
+     *
      * @return The corresponding field.
      */
-    public String getUsername() { return username; }
-    public String getPassword() { return password; }
-    public String getName() { return name; }
-    public int getAge() { return age; }
-    public int getHeight() { return height; }
-    public int getWeight() { return weight; }
-    public ActivityLevel getActivityLevel() { return activityLevel; }
-    public Sex getSex() { return sex; }
-    public List<String> getTestResultsList() { return testResultsList; }
+    public String getUsername() {
+        return username;
+    }
 
+    public String getPassword() {
+        return password;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public int getWeight() {
+        return weight;
+    }
+
+    public ActivityLevel getActivityLevel() {
+        return activityLevel;
+    }
+
+    public Sex getSex() {
+        return sex;
+    }
+
+    public List<String> getTestResultsList() {
+        return testResultsList;
+    }
 
 
 }
