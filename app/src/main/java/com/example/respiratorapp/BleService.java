@@ -48,6 +48,7 @@ public class BleService extends Service {
      */
     private static final String UUID_HR = "00002a37-0000-1000-8000-00805f9b34fb";
     private static final String UUID_RR = "00003b57-0000-1000-8000-00805f9b34fb";
+    private static final String UUID_BO2 = "00004b57-0000-1000-8000-00805f9b34fb"; // check this string id
 
 
     /**
@@ -87,7 +88,7 @@ public class BleService extends Service {
     private BluetoothLeScanner bleScanner;
     private BluetoothGattDescriptor rrDescriptor;
     private BluetoothGattDescriptor hrDescriptor;
-
+    private BluetoothGattDescriptor bo2Descriptor;
     private Handler handler;
 
     /**
@@ -128,16 +129,24 @@ public class BleService extends Service {
     /**
      * Characteristics to be read
      */
-    private int hrVal, rrVal;
+    private int hrVal, rrVal, bo2Val;
 
-    private int [][] rrMeasurements, hrMeasurements = new int [NUM_MEASUREMENTS][2];
+    private int [][] rrMeasurements, bo2Measurements, hrMeasurements = new int [NUM_MEASUREMENTS][2];
 
     public void setHRMeasurement( int[][] arr) {
         this.hrMeasurements = arr;
     }
+    public void setBO2Measurements( int[][] arr) { this.bo2Measurements = arr; }
+    public void setRRMeasurements( int[][] arr) { this.rrMeasurements = arr; }
 
     public int[][] getHRMeasurement(){
         return this.hrMeasurements;
+    }
+    public int[][] getBO2Measurement(){
+        return this.bo2Measurements;
+    }
+    public int[][] getRRMeasurement(){
+        return this.rrMeasurements;
     }
 
     /**
@@ -169,6 +178,8 @@ public class BleService extends Service {
     public int getRrVal(){
         return this.rrVal;
     }
+
+    public int getBo2Val() {return this.bo2Val; }
 
 
     /**
@@ -204,6 +215,24 @@ public class BleService extends Service {
         }
         rrDescriptor.setValue(val);
         bleGatt.writeDescriptor(rrDescriptor);
+        Log.i(LOGGER_INFO, "Changing respiratory rate notifications.");
+    }
+
+    /**
+     * Notifies the BLE Device to update for BO2 measurements.
+     *
+     * @param val BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE to notify, BluetoothGattDescriptor.DISABLE_NOTIFICATION_VALUE
+     *            to turn off notifications.
+     */
+    public void notifyBO2(byte[] val) {
+        if (val == BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE) {
+            bleGatt.setCharacteristicNotification(bo2Descriptor.getCharacteristic(), true);
+        }
+        else if (val == BluetoothGattDescriptor.DISABLE_NOTIFICATION_VALUE) {
+            bleGatt.setCharacteristicNotification(bo2Descriptor.getCharacteristic(), false);
+        }
+        bo2Descriptor.setValue(val);
+        bleGatt.writeDescriptor(bo2Descriptor);
         Log.i(LOGGER_INFO, "Changing respiratory rate notifications.");
     }
 
@@ -324,6 +353,12 @@ public class BleService extends Service {
                     BluetoothGattDescriptor descriptor =
                             characteristic.getDescriptor(characteristic.getDescriptors().get(0).getUuid());
                     rrDescriptor = descriptor;
+                }
+                if (characteristic.getUuid().toString().equals(UUID_BO2)) {
+                    bleGatt.setCharacteristicNotification(characteristic, true);
+                    BluetoothGattDescriptor descriptor =
+                            characteristic.getDescriptor(characteristic.getDescriptors().get(0).getUuid());
+                    bo2Descriptor = descriptor;
                 }
             }
         }
