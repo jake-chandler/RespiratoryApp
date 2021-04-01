@@ -19,6 +19,7 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 
 import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.Viewport;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
@@ -27,6 +28,7 @@ import java.util.Calendar;
 public class Test2Activity extends AppCompatActivity {
 
     private static final int NUM_MEASUREMENTS = 100;
+    private static final int UPDATE_TIME = 100;
     private ImageView next;
     private ImageView retry;
     private GraphView BO2Graph;
@@ -52,30 +54,25 @@ public class Test2Activity extends AppCompatActivity {
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     protected void collectMeasurements() throws InterruptedException {
-        BO2Graph = (GraphView) findViewById(R.id.oxygen_graph);
-        Intent intent = new Intent(this, BleService.class);
-        bindService(intent, connection, Context.BIND_AUTO_CREATE);
-
-        series = new LineGraphSeries<>();
-
         long startTime = Calendar.getInstance().getTimeInMillis();
         int i = 0;
         int[][] bo2Measurements = new int[NUM_MEASUREMENTS][2];
 
         long endTime;
         do {
-            Thread.sleep(100 );
-
-            if (i == NUM_MEASUREMENTS) {
-                break;
-            }
+            if (i == NUM_MEASUREMENTS) { break; }
+            // sleep this thread UPDATE_TIME milliseconds. to ensure retrieval of latest measurement from the sensor device.
+            Thread.sleep(UPDATE_TIME );
+            // get the metric from the Ble Service
             bo2Measurements[i][1] = svc.getHrVal();
-            i++;
             endTime = Calendar.getInstance().getTimeInMillis();
-            double x = (int) (endTime - startTime);
-            bo2Measurements[i][0] = (int) x;
-            double y = bo2Measurements[i][1];
-            series.appendData( new DataPoint( x, y ),true,NUM_MEASUREMENTS );
+            double time = (int) (endTime);
+            double b02 = bo2Measurements[i][1];
+            bo2Measurements[i][0] = (int) time;
+
+            // plot metric to graph.
+            series.appendData( new DataPoint( time, b02),true,NUM_MEASUREMENTS );
+            i++;
         } while (endTime - startTime < SAMPLE_TIME);
         svc.setBO2Measurements( bo2Measurements );
     }
@@ -99,6 +96,22 @@ public class Test2Activity extends AppCompatActivity {
         });
     }
 
+    private void initGraph() {
+        BO2Graph = (GraphView) findViewById(R.id.heartrate_graph);
+        Intent intent = new Intent(activity, BleService.class);
+        bindService(intent, connection, Context.BIND_AUTO_CREATE);
+
+        series = new LineGraphSeries<>();
+        BO2Graph.addSeries(series);
+
+        Viewport viewport = BO2Graph.getViewport();
+        viewport.setYAxisBoundsManual(true);
+        viewport.setMinY(0);
+        viewport.setMaxY(100);
+        viewport.setScrollable(true);
+
+    }
+
 
 
     private ServiceConnection connection = new ServiceConnection() {
@@ -107,15 +120,17 @@ public class Test2Activity extends AppCompatActivity {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             Log.i("PAIRED", "Ble Service discovered.");
-            BleService.BleServiceBinder binder = (BleService.BleServiceBinder) service;
-            svc = binder.getService();
-            svc.notifyHR(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
-            Log.i("PAIRED", "Notifying service...");
-            try {
-                collectMeasurements();
-            } catch (InterruptedException e) {
-                Log.i("FORM","error");
-            }
+            // initialize graph.
+            initGraph();
+
+            // update graph with data points in the background.
+            new Thread(() -> {
+                try {
+                    collectMeasurements();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }).start();
         }
 
         @Override
