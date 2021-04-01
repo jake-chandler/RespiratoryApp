@@ -19,6 +19,7 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 
 import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.Viewport;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
@@ -52,11 +53,6 @@ public class TestActivity extends AppCompatActivity {
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     protected void collectMeasurements() throws InterruptedException {
-        heartGraph = (GraphView) findViewById(R.id.heartrate_graph);
-        Intent intent = new Intent(this, BleService.class);
-        bindService(intent, connection, Context.BIND_AUTO_CREATE);
-
-        series = new LineGraphSeries<>();
 
         long startTime = Calendar.getInstance().getTimeInMillis();
         int i = 0;
@@ -64,7 +60,8 @@ public class TestActivity extends AppCompatActivity {
 
         long endTime;
         do {
-            Thread.sleep(100 );
+            // sleep every 100 ms to 'stay updated' with the MC characteristic.
+            Thread.sleep(100);
 
             if (i == NUM_MEASUREMENTS) {
                 break;
@@ -75,9 +72,9 @@ public class TestActivity extends AppCompatActivity {
             double x = (int) (endTime - startTime);
             hrMeasurements[i][0] = (int) x;
             double y = hrMeasurements[i][1];
-            series.appendData( new DataPoint( x, y ),true,NUM_MEASUREMENTS );
+            series.appendData(new DataPoint(x, y), true, NUM_MEASUREMENTS);
         } while (endTime - startTime < SAMPLE_TIME);
-        svc.setHRMeasurement( hrMeasurements );
+        svc.setHRMeasurement(hrMeasurements);
     }
 
     protected void initListeners() {
@@ -101,6 +98,20 @@ public class TestActivity extends AppCompatActivity {
             }
         });
     }
+    private void initGraph() {
+        heartGraph = (GraphView) findViewById(R.id.heartrate_graph);
+        Intent intent = new Intent(activity, BleService.class);
+        bindService(intent, connection, Context.BIND_AUTO_CREATE);
+
+        series = new LineGraphSeries<>();
+        heartGraph.addSeries(series);
+
+        Viewport viewport = heartGraph.getViewport();
+        viewport.setYAxisBoundsManual(true);
+        viewport.setMinY(0);
+        viewport.setMaxY(200);
+        viewport.setScalable(true);
+    }
 
     private ServiceConnection connection = new ServiceConnection() {
 
@@ -112,11 +123,19 @@ public class TestActivity extends AppCompatActivity {
             svc = binder.getService();
             svc.notifyHR(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
             Log.i("PAIRED", "Notifying service...");
-            try {
-                collectMeasurements();
-            } catch (InterruptedException e) {
-                Log.i("FORM","error");
-            }
+
+            // initialize graph.
+            initGraph();
+
+            // update graph with data points in the background.
+            new Thread(() -> {
+                try {
+                    collectMeasurements();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }).start();
+
         }
 
         @Override
