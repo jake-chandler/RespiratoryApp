@@ -60,7 +60,7 @@ public class TestActivity extends AppCompatActivity {
 
         long endTime;
         do {
-            // sleep every 100 ms to 'stay updated' with the MC characteristic.
+            // sleep every 100 ms to stay updated with the MC characteristic.
             Thread.sleep(100);
 
             if (i == NUM_MEASUREMENTS) {
