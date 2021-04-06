@@ -1,10 +1,6 @@
 package com.example.respiratorapp;
 
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.Activity;
-import android.bluetooth.BluetoothGattDescriptor;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -13,29 +9,30 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
-import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
+
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.Viewport;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
+import java.sql.Timestamp;
 import java.util.Calendar;
+import java.util.List;
 
 public class Test2Activity extends AppCompatActivity {
 
     private static final int NUM_MEASUREMENTS = 100;
+    private static final Timestamp SAMPLE_TIME = new Timestamp(10000);
     private static final int UPDATE_TIME = 100;
-    private ImageView next;
-    private ImageView retry;
-    private GraphView BO2Graph;
     BleService svc;
     Activity activity = this;
     private LineGraphSeries<DataPoint> series;
-    public static final long SAMPLE_TIME = 10000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,49 +52,45 @@ public class Test2Activity extends AppCompatActivity {
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     protected void collectMeasurements() throws InterruptedException {
         long startTime = Calendar.getInstance().getTimeInMillis();
-        int i = 0;
-        int[][] bo2Measurements = new int[NUM_MEASUREMENTS][2];
-
+        List<DataPoint> b02Measurements = null;
+        Timestamp timeElapsed;
         long endTime;
         do {
-            if (i == NUM_MEASUREMENTS) { break; }
+            if (b02Measurements.size() == NUM_MEASUREMENTS) { break; }
             // sleep this thread UPDATE_TIME milliseconds. to ensure retrieval of latest measurement from the sensor device.
-            Thread.sleep(UPDATE_TIME );
-            // get the metric from the Ble Service
-            bo2Measurements[i][1] = svc.getHrVal();
+            Thread.sleep(UPDATE_TIME);
             endTime = Calendar.getInstance().getTimeInMillis();
-            double time = (int) (endTime);
-            double b02 = bo2Measurements[i][1];
-            bo2Measurements[i][0] = (int) time;
+
+            // get the metric from the Ble Service
+            double time = endTime;
+            double b02 =    svc.getHrVal();;
 
             // plot metric to graph.
             series.appendData( new DataPoint( time, b02),true,NUM_MEASUREMENTS );
-            i++;
-        } while (endTime - startTime < SAMPLE_TIME);
-        svc.setBO2Measurements( bo2Measurements );
+            b02Measurements.add(new DataPoint(time, b02));
+            timeElapsed = new Timestamp((endTime - startTime));
+        } while (timeElapsed.compareTo(SAMPLE_TIME) < 0);
+        // save measurements with the BLE service.
+        if (b02Measurements != null) {
+            svc.setB02Measurements(b02Measurements);
+        }
     }
 
     protected void initListeners() {
-        next = (ImageView) findViewById(R.id.next_btn);
-        retry = (ImageView) findViewById(R.id.retry_btn);
-        next.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(Test2Activity.this, Test3Activity.class);
-                startActivity(intent);
-            }
+        ImageView next = findViewById(R.id.next_btn);
+        ImageView retry = findViewById(R.id.retry_btn);
+        next.setOnClickListener(view -> {
+            Intent intent = new Intent(Test2Activity.this, Test3Activity.class);
+            startActivity(intent);
         });
-        retry.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(Test2Activity.this, Test2Activity.class);
-                startActivity(intent);
-            }
+        retry.setOnClickListener(view -> {
+            Intent intent = new Intent(Test2Activity.this, Test2Activity.class);
+            startActivity(intent);
         });
     }
 
     private void initGraph() {
-        BO2Graph = (GraphView) findViewById(R.id.heartrate_graph);
+        GraphView BO2Graph = findViewById(R.id.heartrate_graph);
         Intent intent = new Intent(activity, BleService.class);
         bindService(intent, connection, Context.BIND_AUTO_CREATE);
 
@@ -114,7 +107,7 @@ public class Test2Activity extends AppCompatActivity {
 
 
 
-    private ServiceConnection connection = new ServiceConnection() {
+    private final ServiceConnection connection = new ServiceConnection() {
 
         @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
         @Override
