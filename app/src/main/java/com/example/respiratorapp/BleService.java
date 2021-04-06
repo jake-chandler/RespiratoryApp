@@ -147,6 +147,7 @@ public class BleService extends Service {
      * @note To be set by called in TestActivity
      */
     public void setHRMeasurement(List<DataPoint> arr) {
+        Log.i(LOGGER_INFO, "Storing heart rate measurements.");
         this.hrMeasurements = arr;
     }
     /**
@@ -155,6 +156,7 @@ public class BleService extends Service {
      * @note To be called in Test2Activity
      */
     public void setB02Measurements(List<DataPoint> arr) {
+        Log.i(LOGGER_INFO, "Storing blood oxygen measurements.");
         this.b02Measurements = arr;
     }
     /**
@@ -163,6 +165,7 @@ public class BleService extends Service {
      * @note to be called in Test3Activity
      */
     public void setRRMeasurements(List<DataPoint> arr) {
+        Log.i(LOGGER_INFO, "Storing respiratory frequency measurements.");
         this.rrMeasurements = arr;
     }
     /**

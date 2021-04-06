@@ -57,6 +57,7 @@ public class Test3Activity extends AppCompatActivity {
         List<DataPoint> rrMeasurements = null;
         Timestamp timeElapsed;
         long endTime = 0;
+        Log.i("MEASUREMENT_THREAD", "Updating live graph...");
         // take measurements for SAMPLE_TIME milliseconds or until we've achieved the NUM_MEASUREMENTS of measurements.
         // theoretically, it should take SAMPLE_TIME milliseconds in order to reach NUM_MEASUREMENTS measurements.
         do {
@@ -126,9 +127,10 @@ public class Test3Activity extends AppCompatActivity {
             // update graph with data points in the background.
             new Thread(() -> {
                 try {
+                    Log.i("MEASUREMENT_THREAD", "Collecting measurements.");
                     collectMeasurements();
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    Log.e("MEASUREMENT_THREAD", e.toString());
                 }
             }).start();
         }

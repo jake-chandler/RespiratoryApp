@@ -55,6 +55,7 @@ public class Test2Activity extends AppCompatActivity {
         List<DataPoint> b02Measurements = null;
         Timestamp timeElapsed;
         long endTime;
+        Log.i("MEASUREMENT_THREAD", "Updating live graph...");
         do {
             if (b02Measurements.size() == NUM_MEASUREMENTS) { break; }
             // sleep this thread UPDATE_TIME milliseconds. to ensure retrieval of latest measurement from the sensor device.
@@ -119,9 +120,11 @@ public class Test2Activity extends AppCompatActivity {
             // update graph with data points in the background.
             new Thread(() -> {
                 try {
+                    Log.i("MEASUREMENT_THREAD", "Collecting measurements.");
                     collectMeasurements();
+                    Log.i("MEASUREMENT_THREAD", "Collected measurements!");
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    Log.e("MEASUREMENT_THREAD", e.toString());
                 }
             }).start();
         }
