@@ -124,9 +124,10 @@ public class TestActivity extends AppCompatActivity {
             // update graph with data points in the background.
             new Thread(() -> {
                 try {
+                    Log.i("MEASUREMENT_THREAD", "Collecting measurements...");
                     collectMeasurements();
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    Log.e("MEASUREMENT_THREAD", e.toString());
                 }
             }).start();
 
