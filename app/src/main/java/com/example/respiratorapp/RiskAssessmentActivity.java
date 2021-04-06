@@ -23,17 +23,16 @@ import java.io.IOException;
 
 public class RiskAssessmentActivity extends AppCompatActivity {
 
-    private ImageView export;
-    private ImageView home;
-    private TextView riskText;
-    private TextView meansText;
     private static final int NUM_MEASUREMENTS = 100;
-    private TestResults RiskAssessment;
+    private TestResults riskAssessment;
     private BleService svc;
-    private String Information;
+    private String information;
     private Activity activity = this;
     private RespiratoryUser user;
     private UserService userService;
+    ImageView export, home;
+    TextView riskText;
+    TextView meansText;
 
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -59,14 +58,11 @@ public class RiskAssessmentActivity extends AppCompatActivity {
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     protected void initListeners() {
-        export = (ImageView) findViewById(R.id.export_res);
-        home = (ImageView) findViewById(R.id.home);
-        riskText = (TextView) findViewById(R.id.textViewRiskAssessment);
-        meansText = (TextView) findViewById(R.id.textViewThisMeans);
+        ImageView export = (ImageView) findViewById(R.id.export_res);
+        ImageView home = (ImageView) findViewById(R.id.home);
+        TextView riskText = (TextView) findViewById(R.id.textViewRiskAssessment);
+        TextView meansText = (TextView) findViewById(R.id.textViewThisMeans);
 
-        Information = (RiskAssessment.getBo2Risk().toString() + "\n" + RiskAssessment.getHrRisk() + "\n" + RiskAssessment.getRrRisk());
-        riskText.setText( RiskAssessment.getOverallRisk().toString() );
-        meansText.setText( Information );
 
         export.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -122,6 +118,9 @@ public class RiskAssessmentActivity extends AppCompatActivity {
         } catch (IOException e) {
             Log.i("RISK_ASSESSMENT", "Failed to save user.");
         }
+        information = (riskAssessment.getBo2Risk().toString() + "\n" + riskAssessment.getHrRisk() + "\n" + riskAssessment.getRrRisk());
+        riskText.setText( riskAssessment.getOverallRisk().toString() );
+        meansText.setText( information );
     }
     private ServiceConnection userServiceConnection = new ServiceConnection() {
         @Override
