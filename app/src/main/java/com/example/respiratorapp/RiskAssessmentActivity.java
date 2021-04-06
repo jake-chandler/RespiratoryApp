@@ -19,17 +19,18 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.jjoe64.graphview.series.DataPoint;
+
 import java.io.IOException;
+import java.util.List;
 
 public class RiskAssessmentActivity extends AppCompatActivity {
 
     private static final int NUM_MEASUREMENTS = 100;
     private TestResults riskAssessment;
     private BleService svc;
-    private String information;
-    private Activity activity = this;
+    private final Activity activity = this;
     private RespiratoryUser user;
-    private UserService userService;
     ImageView export, home;
     TextView riskText;
     TextView meansText;
@@ -52,7 +53,7 @@ public class RiskAssessmentActivity extends AppCompatActivity {
         Intent intent = new Intent(activity, BleService.class);
         bindService(intent, connection, Context.BIND_AUTO_CREATE);
         Intent userServiceIntent = new Intent(activity, UserService.class);
-        bindService(intent, userServiceConnection, Context.BIND_AUTO_CREATE);
+        bindService(userServiceIntent, userServiceConnection, Context.BIND_AUTO_CREATE);
 
     }
 
@@ -103,12 +104,12 @@ public class RiskAssessmentActivity extends AppCompatActivity {
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private void runTest() {
-        int [][] bo2Meas, hrMeas, rrMeas;
+        List<DataPoint> hrMeas, rrMeas, b02Meas;
 
         // retrieve measurement data from BleService.
         hrMeas = svc.getHRMeasurement();
         rrMeas = svc.getRRMeasurement();
-        bo2Meas = svc.getBO2Measurement();
+        b02Meas = svc.getB02Measurement();
 
         TestResults test = null;
         test.saveTestResults(this);
@@ -118,9 +119,9 @@ public class RiskAssessmentActivity extends AppCompatActivity {
         } catch (IOException e) {
             Log.i("RISK_ASSESSMENT", "Failed to save user.");
         }
-        information = (riskAssessment.getBo2Risk().toString() + "\n" + riskAssessment.getHrRisk() + "\n" + riskAssessment.getRrRisk());
+        String information = (riskAssessment.getBo2Risk().toString() + "\n" + riskAssessment.getHrRisk() + "\n" + riskAssessment.getRrRisk());
         riskText.setText( riskAssessment.getOverallRisk().toString() );
-        meansText.setText( information );
+        meansText.setText(information);
     }
     private ServiceConnection userServiceConnection = new ServiceConnection() {
         @Override
@@ -128,7 +129,7 @@ public class RiskAssessmentActivity extends AppCompatActivity {
             UserService.UserServiceBinder binder = (UserService.UserServiceBinder) service;
 
             // retrieve this session's user.
-            userService = binder.getService();
+            UserService userService = binder.getService();
             user = userService.getActiveUser();
         }
 

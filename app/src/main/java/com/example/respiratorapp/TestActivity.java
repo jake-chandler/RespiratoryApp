@@ -23,18 +23,18 @@ import com.jjoe64.graphview.Viewport;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
+import java.sql.Timestamp;
 import java.util.Calendar;
+import java.util.List;
 
 public class TestActivity extends AppCompatActivity {
 
     private static final int NUM_MEASUREMENTS = 100;
-    private ImageView next;
-    private ImageView retry;
-    private GraphView heartGraph;
+    private static final Timestamp SAMPLE_TIME = new Timestamp(10000);
+    public static final long UPDATE_TIME = 100;
     BleService svc;
     Activity activity = this;
     private LineGraphSeries<DataPoint> series;
-    public static final long SAMPLE_TIME = 10000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,51 +55,45 @@ public class TestActivity extends AppCompatActivity {
     protected void collectMeasurements() throws InterruptedException {
 
         long startTime = Calendar.getInstance().getTimeInMillis();
-        int i = 0;
-        int[][] hrMeasurements = new int[NUM_MEASUREMENTS][2];
-
+        List<DataPoint> hrMeasurements = null;
+        Timestamp timeElapsed;
         long endTime;
         do {
             // sleep every 100 ms to stay updated with the MC characteristic.
-            Thread.sleep(100);
+            Thread.sleep(UPDATE_TIME);
 
-            if (i == NUM_MEASUREMENTS) {
+            if (hrMeasurements.size() == NUM_MEASUREMENTS - 1) {
                 break;
             }
-            hrMeasurements[i][1] = svc.getHrVal();
-            i++;
             endTime = Calendar.getInstance().getTimeInMillis();
-            double x = (int) (endTime - startTime);
-            hrMeasurements[i][0] = (int) x;
-            double y = hrMeasurements[i][1];
+            double x = endTime;
+            double y = svc.getHrVal();
+            hrMeasurements.add(new DataPoint(x, y));
             series.appendData(new DataPoint(x, y), true, NUM_MEASUREMENTS);
-        } while (endTime - startTime < SAMPLE_TIME);
-        svc.setHRMeasurement(hrMeasurements);
+            timeElapsed = new Timestamp((endTime - startTime));
+        } while (timeElapsed.compareTo(SAMPLE_TIME) < 0);
+        if (hrMeasurements != null) {
+            svc.setHRMeasurement(hrMeasurements);
+        }
     }
 
     protected void initListeners() {
-        next = (ImageView) findViewById(R.id.next_btn);
-        retry = (ImageView) findViewById(R.id.retry_btn);
+        ImageView next = findViewById(R.id.next_btn);
+        ImageView retry = findViewById(R.id.retry_btn);
 
-        next.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(TestActivity.this, Test2Activity.class);
-                startActivity(intent);
-                //setContentView(R.layout.activity_test2);
-            }
+        next.setOnClickListener(view -> {
+            Intent intent = new Intent(TestActivity.this, Test2Activity.class);
+            startActivity(intent);
+            //setContentView(R.layout.activity_test2);
         });
 
-        retry.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(TestActivity.this, TestActivity.class);
-                startActivity(intent);
-            }
+        retry.setOnClickListener(view -> {
+            Intent intent = new Intent(TestActivity.this, TestActivity.class);
+            startActivity(intent);
         });
     }
     private void initGraph() {
-        heartGraph = (GraphView) findViewById(R.id.heartrate_graph);
+        GraphView heartGraph = findViewById(R.id.heartrate_graph);
         Intent intent = new Intent(activity, BleService.class);
         bindService(intent, connection, Context.BIND_AUTO_CREATE);
 
@@ -113,7 +107,7 @@ public class TestActivity extends AppCompatActivity {
         viewport.setScalable(true);
     }
 
-    private ServiceConnection connection = new ServiceConnection() {
+    private final ServiceConnection connection = new ServiceConnection() {
 
         @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
         @Override

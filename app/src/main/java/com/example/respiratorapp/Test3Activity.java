@@ -1,10 +1,6 @@
 package com.example.respiratorapp;
 
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.Activity;
-import android.bluetooth.BluetoothGattDescriptor;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -13,28 +9,30 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
-import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
+
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.Viewport;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
+import java.sql.Timestamp;
 import java.util.Calendar;
+import java.util.List;
 
 public class Test3Activity extends AppCompatActivity {
 
     private static final int NUM_MEASUREMENTS = 100;
-    private ImageView next;
-    private ImageView retry;
+    private static final Timestamp SAMPLE_TIME = new Timestamp(10000);
+    private static final int UPDATE_TIME = 100;
     BleService svc;
-    private GraphView respiratoryRateGraph;
     Activity activity = this;
     private LineGraphSeries<DataPoint> series;
-    public static final long SAMPLE_TIME = 10000;
 
 
     @Override
@@ -56,49 +54,48 @@ public class Test3Activity extends AppCompatActivity {
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     protected void collectMeasurements() throws InterruptedException {
         long startTime = Calendar.getInstance().getTimeInMillis();
-        int i = 0;
-        int[][] rrMeasurements = new int[NUM_MEASUREMENTS][2];
-
-        long endTime;
+        List<DataPoint> rrMeasurements = null;
+        Timestamp timeElapsed;
+        long endTime = 0;
+        // take measurements for SAMPLE_TIME milliseconds or until we've achieved the NUM_MEASUREMENTS of measurements.
+        // theoretically, it should take SAMPLE_TIME milliseconds in order to reach NUM_MEASUREMENTS measurements.
         do {
-            Thread.sleep(100 );
+            // this is to prevent slight update timing issues that may arise.
 
-            if (i == NUM_MEASUREMENTS) {
-                break;
-            }
-            rrMeasurements[i][1] = svc.getHrVal();
-            i++;
+            if (rrMeasurements.size() == NUM_MEASUREMENTS) { break; }
+            // sleep this thread UPDATE_TIME milliseconds. to ensure retrieval of latest measurement from the sensor device.
+            Thread.sleep(UPDATE_TIME);
             endTime = Calendar.getInstance().getTimeInMillis();
-            double x = (int) (endTime - startTime);
-            rrMeasurements[i][0] = (int) x;
-            double y = rrMeasurements[i][1];
-            series.appendData( new DataPoint( x, y ),true,NUM_MEASUREMENTS );
-        } while (endTime - startTime < SAMPLE_TIME);
-        svc.setRRMeasurements( rrMeasurements );
+            // get the metric from the Ble Service
+            double time = endTime;
+            double rr =    svc.getRrVal();
+
+            // plot metric to graph.
+            series.appendData( new DataPoint( time, rr),true,NUM_MEASUREMENTS );
+            rrMeasurements.add(new DataPoint(time, rr));
+            timeElapsed = new Timestamp((endTime - startTime));
+        } while (timeElapsed.compareTo(SAMPLE_TIME) < 0);
+        if (rrMeasurements != null) {
+            svc.setRRMeasurements(rrMeasurements);
+        }
     }
 
 
     protected void initListeners() {
-        next = (ImageView) findViewById(R.id.next_btn);
-        retry = (ImageView) findViewById(R.id.retry_btn);
-        next.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(Test3Activity.this, RiskAssessmentActivity.class);
-                startActivity(intent);
-            }
+        ImageView next = findViewById(R.id.next_btn);
+        ImageView retry = findViewById(R.id.retry_btn);
+        next.setOnClickListener(view -> {
+            Intent intent = new Intent(Test3Activity.this, RiskAssessmentActivity.class);
+            startActivity(intent);
         });
-        retry.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(Test3Activity.this, Test3Activity.class);
-                startActivity(intent);
-            }
+        retry.setOnClickListener(view -> {
+            Intent intent = new Intent(Test3Activity.this, Test3Activity.class);
+            startActivity(intent);
         });
     }
 
     private void initGraph() {
-        respiratoryRateGraph = (GraphView) findViewById(R.id.heartrate_graph);
+        GraphView respiratoryRateGraph = findViewById(R.id.heartrate_graph);
         Intent intent = new Intent(activity, BleService.class);
         bindService(intent, connection, Context.BIND_AUTO_CREATE);
 
@@ -117,7 +114,7 @@ public class Test3Activity extends AppCompatActivity {
 
 
 
-    private ServiceConnection connection = new ServiceConnection() {
+    private final ServiceConnection connection = new ServiceConnection() {
 
         @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
         @Override
