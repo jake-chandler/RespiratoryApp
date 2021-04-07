@@ -12,6 +12,7 @@ import android.content.ServiceConnection;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -27,13 +28,17 @@ import java.util.List;
 public class RiskAssessmentActivity extends AppCompatActivity {
 
     private static final int NUM_MEASUREMENTS = 100;
-    private TestResults riskAssessment;
-    private BleService svc;
+    private BleService ble_svc;
     private final Activity activity = this;
     private RespiratoryUser user;
     ImageView export, home;
     TextView riskText;
     TextView meansText;
+    TestResults test;
+    TestResults.HR_RiskAssessment hrRisk;
+    TestResults.RR_RiskAssessment rrRisk;
+    TestResults.B02_RiskAssessment b02Risk;
+    TestResults.RiskAssessment riskAssessment;
 
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -89,8 +94,8 @@ public class RiskAssessmentActivity extends AppCompatActivity {
         public void onServiceConnected(ComponentName name, IBinder service) {
             Log.i("PAIRED", "Ble Service discovered.");
             BleService.BleServiceBinder binder = (BleService.BleServiceBinder) service;
-            svc = binder.getService();
-            svc.notifyHR(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
+            ble_svc = binder.getService();
+            ble_svc.notifyHR(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
             Log.i("PAIRED", "Notifying service...");
             runTest();
 
@@ -107,11 +112,10 @@ public class RiskAssessmentActivity extends AppCompatActivity {
         List<DataPoint> hrMeas, rrMeas, b02Meas;
 
         // retrieve measurement data from BleService.
-        hrMeas = svc.getHRMeasurement();
-        rrMeas = svc.getRRMeasurement();
-        b02Meas = svc.getB02Measurement();
-
-        TestResults test = null;
+        hrMeas = ble_svc.getHRMeasurement();
+        rrMeas = ble_svc.getRRMeasurement();
+        b02Meas = ble_svc.getB02Measurement();
+        
         test.saveTestResults(this);
         user.addTestResult(test.getTestID());
         try {
@@ -119,8 +123,8 @@ public class RiskAssessmentActivity extends AppCompatActivity {
         } catch (IOException e) {
             Log.i("RISK_ASSESSMENT", "Failed to save user.");
         }
-        String information = (riskAssessment.getBo2Risk().toString() + "\n" + riskAssessment.getHrRisk() + "\n" + riskAssessment.getRrRisk());
-        riskText.setText( riskAssessment.getOverallRisk().toString() );
+        String information = rrRisk + " " + hrRisk + " " + b02Risk + " ";
+        riskText.setText( information );
         meansText.setText(information);
     }
     private ServiceConnection userServiceConnection = new ServiceConnection() {
@@ -139,25 +143,36 @@ public class RiskAssessmentActivity extends AppCompatActivity {
         }
     };
 
-    private void calculateHrRisk(int[][] meas) {
-        for (int i = 0; i < NUM_MEASUREMENTS; i++) {
-
-        }
-    }
-    private void calculateRrRisk(int[][] meas) {
-        for (int i = 0; i < NUM_MEASUREMENTS; i++) {
-
-
-        }
-    }
-    private void calculateB02Risk(int[][] meas) {
-        for (int i = 0; i < NUM_MEASUREMENTS; i++) {
-
-            if (meas[i][1] <= 89) {
-                // abnormal
-            } else if (meas[i][1] >= 95) {
-                // normal
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    private void calculateHrRisk() {
+        for (DataPoint measurement : ble_svc.getHRMeasurement()) {
+ 
+            double heartRate = measurement.getY();
+            // TODO: Set heart rate threshold values based on age.
+            int upperThreshold = 0, lowerThreshold = 0;
+            if (user.getAge() > 60) {
+                if (user.getAge() > 70) {
+                    
+                }
             }
+            if (lowerThreshold <heartRate && heartRate < upperThreshold) {
+                // normal
+                hrRisk = TestResults.HR_RiskAssessment.LOW;
+            } else {
+                
+            }
+        }
+    }
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    private void calculateRrRisk() {
+        for (DataPoint measurement : ble_svc.getRRMeasurement()) {
+            double time = measurement.getX();
+        }
+    }
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    private void calculateB02Risk() {
+        for (DataPoint measurement : ble_svc.getB02Measurement()) {
+            
         }
     }
 }
