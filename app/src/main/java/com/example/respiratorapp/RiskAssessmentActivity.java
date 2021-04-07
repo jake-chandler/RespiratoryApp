@@ -28,7 +28,7 @@ import java.util.List;
 public class RiskAssessmentActivity extends AppCompatActivity {
 
     private static final int NUM_MEASUREMENTS = 100;
-    private BleService ble_svc;
+    private BleService bleService;
     private final Activity activity = this;
     private RespiratoryUser user;
     ImageView export, home;
@@ -94,8 +94,8 @@ public class RiskAssessmentActivity extends AppCompatActivity {
         public void onServiceConnected(ComponentName name, IBinder service) {
             Log.i("PAIRED", "Ble Service discovered.");
             BleService.BleServiceBinder binder = (BleService.BleServiceBinder) service;
-            ble_svc = binder.getService();
-            ble_svc.notifyHR(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
+            bleService = binder.getService();
+            bleService.notifyHR(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
             Log.i("PAIRED", "Notifying service...");
             runTest();
 
@@ -112,9 +112,9 @@ public class RiskAssessmentActivity extends AppCompatActivity {
         List<DataPoint> hrMeas, rrMeas, b02Meas;
 
         // retrieve measurement data from BleService.
-        hrMeas = ble_svc.getHRMeasurement();
-        rrMeas = ble_svc.getRRMeasurement();
-        b02Meas = ble_svc.getB02Measurement();
+        hrMeas = bleService.getHRMeasurement();
+        rrMeas = bleService.getRRMeasurement();
+        b02Meas = bleService.getB02Measurement();
         
         test.saveTestResults(this);
         user.addTestResult(test.getTestID());
@@ -145,7 +145,7 @@ public class RiskAssessmentActivity extends AppCompatActivity {
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private void calculateHrRisk() {
-        for (DataPoint measurement : ble_svc.getHRMeasurement()) {
+        for (DataPoint measurement : bleService.getHRMeasurement()) {
  
             double heartRate = measurement.getY();
             // TODO: Set heart rate threshold values based on age.
@@ -165,13 +165,13 @@ public class RiskAssessmentActivity extends AppCompatActivity {
     }
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private void calculateRrRisk() {
-        for (DataPoint measurement : ble_svc.getRRMeasurement()) {
+        for (DataPoint measurement : bleService.getRRMeasurement()) {
             double time = measurement.getX();
         }
     }
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private void calculateB02Risk() {
-        for (DataPoint measurement : ble_svc.getB02Measurement()) {
+        for (DataPoint measurement : bleService.getB02Measurement()) {
             
         }
     }

@@ -132,7 +132,7 @@ public class FormActivity extends AppCompatActivity {
             Log.i("FORM", "User Service discovered.");
             UserService.UserServiceBinder binder = (UserService.UserServiceBinder) service;
 
-            // register this user to the User Service.
+            // register this user as this session's user.
             userService = binder.getService();
             userService.registerUser(user);
 
