@@ -34,13 +34,6 @@ public class SettingsActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_settings);
 
-        /**
-         * goes in on click listener for logout button.
-         *
-         * Intent userServiceIntent = new Intent(activity, UserService.class);
-         * bindService(userServiceIntent, connection, Context.BIND_AUTO_CREATE);
-         */
-
         initListeners();
     }
 
