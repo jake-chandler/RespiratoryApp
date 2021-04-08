@@ -24,17 +24,27 @@ import com.jjoe64.graphview.series.LineGraphSeries;
 
 import java.util.Calendar;
 
+/**
+ * @brief Represents the respiratory rate test screen of our application
+ */
 public class Test3Activity extends AppCompatActivity {
 
-    private static final int NUM_MEASUREMENTS = 100;
+    /**
+     * Buttons
+     */
     private ImageView next;
     private ImageView retry;
-    BleService svc;
+
+    /**
+     * Graph
+     */
     private GraphView respiratoryRateGraph;
+
+    BleService svc;
     Activity activity = this;
     private LineGraphSeries<DataPoint> series;
     public static final long SAMPLE_TIME = 10000;
-
+    private static final int NUM_MEASUREMENTS = 100;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +60,6 @@ public class Test3Activity extends AppCompatActivity {
         initListeners();
 
     }
-
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     protected void collectMeasurements() throws InterruptedException {
@@ -82,7 +91,6 @@ public class Test3Activity extends AppCompatActivity {
         svc.setRRMeasurements( rrMeasurements );
     }
 
-
     protected void initListeners() {
         next = (ImageView) findViewById(R.id.next_btn);
         retry = (ImageView) findViewById(R.id.retry_btn);
@@ -101,9 +109,6 @@ public class Test3Activity extends AppCompatActivity {
             }
         });
     }
-
-
-
 
     private ServiceConnection connection = new ServiceConnection() {
 

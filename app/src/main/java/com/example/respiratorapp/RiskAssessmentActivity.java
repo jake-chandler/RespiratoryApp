@@ -12,6 +12,9 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+/**
+ * @brief Represents the risk assessment screen of our application
+ */
 public class RiskAssessmentActivity extends AppCompatActivity {
 
     private ImageView export;

@@ -24,16 +24,27 @@ import com.jjoe64.graphview.series.LineGraphSeries;
 
 import java.util.Calendar;
 
+/**
+ * @brief Represents the BO2 test screen of our application
+ */
 public class Test2Activity extends AppCompatActivity {
 
-    private static final int NUM_MEASUREMENTS = 100;
+    /**
+     * Buttons
+     */
     private ImageView next;
     private ImageView retry;
+
+    /**
+     * Graph
+     */
     private GraphView BO2Graph;
+
     BleService svc;
     Activity activity = this;
     private LineGraphSeries<DataPoint> series;
     public static final long SAMPLE_TIME = 10000;
+    private static final int NUM_MEASUREMENTS = 100;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,8 +109,6 @@ public class Test2Activity extends AppCompatActivity {
             }
         });
     }
-
-
 
     private ServiceConnection connection = new ServiceConnection() {
 

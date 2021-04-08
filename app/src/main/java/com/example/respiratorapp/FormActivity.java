@@ -18,9 +18,13 @@ import android.widget.Spinner;
 import java.io.IOException;
 
 /**
- * @brief Represents the form screen of our applications
+ * @brief Represents the form screen of our application
  */
 public class FormActivity extends AppCompatActivity {
+
+    /**
+     * Input fields
+     */
     private EditText name;
     private EditText age;
     private EditText height;
@@ -109,7 +113,9 @@ public class FormActivity extends AppCompatActivity {
                 catch  (IOException e) {
                     Log.i("FORM", "An exception has occurred."); //catches an exception if the form is not filled properly
                 }
-                Intent intent = new Intent(FormActivity.this, HomeActivity.class);
+                SessionManagement sessionManagement = new SessionManagement(getApplicationContext());
+                sessionManagement.saveSession(user);
+                Intent intent = new Intent(FormActivity.this, LoginActivity.class);
                 startActivity(intent);
             }
         });

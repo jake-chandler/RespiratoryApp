@@ -24,16 +24,27 @@ import com.jjoe64.graphview.series.LineGraphSeries;
 
 import java.util.Calendar;
 
+/**
+ * @brief Represents the heart rate test screen of our application
+ */
 public class TestActivity extends AppCompatActivity {
 
-    private static final int NUM_MEASUREMENTS = 100;
+    /**
+     * Buttons
+     */
     private ImageView next;
     private ImageView retry;
+
+    /**
+     * Graph
+     */
     private GraphView heartGraph;
+
     BleService svc;
     Activity activity = this;
     private LineGraphSeries<DataPoint> series;
     public static final long SAMPLE_TIME = 10000;
+    private static final int NUM_MEASUREMENTS = 100;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

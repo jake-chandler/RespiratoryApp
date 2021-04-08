@@ -17,6 +17,9 @@ import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 import com.jjoe64.graphview.series.PointsGraphSeries;
 
+/**
+ * @brief Represents the previous test results screen of our application
+ */
 public class ResultsActivity<series> extends AppCompatActivity {
 
     private ImageView homeButton;
