@@ -21,6 +21,8 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
 
+import com.jjoe64.graphview.series.DataPoint;
+
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
@@ -32,8 +34,10 @@ import java.util.List;
 /**
  * Represents a background service that manages Bluetooth Low Energy connection
  * with the UGA Sensor device. Provides an interface for retrieving BLE characteristic(s) values of
- * the offered BLE services.
+ * the offered BLE services, and storing measurements collected.
  *
+ * @note This service does not offer measurement collection. Rather, it offers a place to store measurements.
+ *       Measurement collection is implemented in each TestActivity.
  * @note This service should be started in the PairingActivity class
  *       and terminated in the TestingActivity class.
  */
@@ -44,7 +48,9 @@ public class BleService extends Service {
     private static final int REQUEST_ENABLE_BT = 1;
 
     /**
-     * UUIDs for HR, RR, and B02 characteristics
+     * UUIDs for HR, RR, and B02 characteristics.
+     *
+     * @note These are known from the micro-controller firmware.
      */
     private static final String UUID_HR = "00002a37-0000-1000-8000-00805f9b34fb";
     private static final String UUID_RR = "00003b57-0000-1000-8000-00805f9b34fb";
@@ -131,26 +137,64 @@ public class BleService extends Service {
      */
     private int hrVal, rrVal, bo2Val;
 
-    private int [][] rrMeasurements, bo2Measurements, hrMeasurements = new int [NUM_MEASUREMENTS][2];
-
-    public void setHRMeasurement( int[][] arr) {
+    /**
+     * Measurements to be stored.
+     */
+    private List<DataPoint> rrMeasurements, b02Measurements, hrMeasurements;
+    /**
+     * Setter for the list of heart rate measurements.
+     * @param arr The list of heart rate measurements.
+     * @note To be set by called in TestActivity
+     */
+    public void setHRMeasurement(List<DataPoint> arr) {
+        Log.i(LOGGER_INFO, "Storing heart rate measurements.");
         this.hrMeasurements = arr;
     }
-    public void setBO2Measurements( int[][] arr) { this.bo2Measurements = arr; }
-    public void setRRMeasurements( int[][] arr) { this.rrMeasurements = arr; }
-
-    public int[][] getHRMeasurement(){
+    /**
+     * Setter for the list of blood oxygen measurements.
+     * @param arr The list of blood oxygen measurements.
+     * @note To be called in Test2Activity
+     */
+    public void setB02Measurements(List<DataPoint> arr) {
+        Log.i(LOGGER_INFO, "Storing blood oxygen measurements.");
+        this.b02Measurements = arr;
+    }
+    /**
+     * Setter for the list of respiratory measurements/
+     * @param arr The list of respiratory measurements.
+     * @note to be called in Test3Activity
+     */
+    public void setRRMeasurements(List<DataPoint> arr) {
+        Log.i(LOGGER_INFO, "Storing respiratory frequency measurements.");
+        this.rrMeasurements = arr;
+    }
+    /**
+     * Getter for the list of heart rate measurements.
+     * @return The list of heart rate measurements.
+     * @note To be called by RiskAssessmentActivity.
+     */
+    List<DataPoint> getHRMeasurement() {
         return this.hrMeasurements;
     }
-    public int[][] getBO2Measurement(){
-        return this.bo2Measurements;
+    /**
+     * Getter for the list of blood oxygen measurements.
+     * @return The list of blood oxygen measurements.
+     * @note To be called by RiskAssessmentActivity.
+     */
+    List<DataPoint> getB02Measurement() {
+        return this.b02Measurements;
     }
-    public int[][] getRRMeasurement(){
+    /**
+     * Getter for the list of respiratory measurements.
+     * @return The list of respiratory measurements.
+     * @note To be called by RiskAssessmentActivity.
+     */
+    List<DataPoint> getRRMeasurement() {
         return this.rrMeasurements;
     }
 
     /**
-     * Class used for the client Binder.
+     * @class Class used for the client Binder.
      */
     public class BleServiceBinder extends Binder {
         BleService getService() {
@@ -161,25 +205,29 @@ public class BleService extends Service {
 
     /**
      * Used to set the context of the activity this Service is started in.
+     *
      * @param context The context the service is started in
      * @note context is expected to be the PairingActivity context.
      */
     public void setContext(Context context) {
         this.context = context;
     }
+
     public void setActivity(Activity activity) {
         this.activity = activity;
     }
 
-    public int getHrVal(){
+    public int getHrVal() {
         return this.hrVal;
     }
 
-    public int getRrVal(){
+    public int getRrVal() {
         return this.rrVal;
     }
 
-    public int getBo2Val() {return this.bo2Val; }
+    public int getBo2Val() {
+        return this.bo2Val;
+    }
 
 
     /**
@@ -191,8 +239,7 @@ public class BleService extends Service {
     public void notifyHR(byte[] val) {
         if (val == BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE) {
             bleGatt.setCharacteristicNotification(hrDescriptor.getCharacteristic(), true);
-        }
-        else if (val == BluetoothGattDescriptor.DISABLE_NOTIFICATION_VALUE) {
+        } else if (val == BluetoothGattDescriptor.DISABLE_NOTIFICATION_VALUE) {
             bleGatt.setCharacteristicNotification(hrDescriptor.getCharacteristic(), false);
         }
         hrDescriptor.setValue(val);
@@ -209,8 +256,7 @@ public class BleService extends Service {
     public void notifyRR(byte[] val) {
         if (val == BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE) {
             bleGatt.setCharacteristicNotification(rrDescriptor.getCharacteristic(), true);
-        }
-        else if (val == BluetoothGattDescriptor.DISABLE_NOTIFICATION_VALUE) {
+        } else if (val == BluetoothGattDescriptor.DISABLE_NOTIFICATION_VALUE) {
             bleGatt.setCharacteristicNotification(rrDescriptor.getCharacteristic(), false);
         }
         rrDescriptor.setValue(val);
@@ -227,8 +273,7 @@ public class BleService extends Service {
     public void notifyBO2(byte[] val) {
         if (val == BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE) {
             bleGatt.setCharacteristicNotification(bo2Descriptor.getCharacteristic(), true);
-        }
-        else if (val == BluetoothGattDescriptor.DISABLE_NOTIFICATION_VALUE) {
+        } else if (val == BluetoothGattDescriptor.DISABLE_NOTIFICATION_VALUE) {
             bleGatt.setCharacteristicNotification(bo2Descriptor.getCharacteristic(), false);
         }
         bo2Descriptor.setValue(val);
@@ -337,6 +382,7 @@ public class BleService extends Service {
 
     /**
      * Helper method used to obtain the BluetoothGattDescriptor for for HR, RR, and B02 characteristics from the offered services
+     *
      * @param services The services offered by the UGA sensor device.
      */
     private void findServices(List<BluetoothGattService> services) {

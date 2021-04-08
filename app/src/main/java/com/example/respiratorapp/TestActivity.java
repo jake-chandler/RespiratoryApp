@@ -19,32 +19,30 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 
 import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.Viewport;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
+import java.sql.Timestamp;
 import java.util.Calendar;
+import java.util.List;
 
 /**
  * @brief Represents the heart rate test screen of our application
  */
 public class TestActivity extends AppCompatActivity {
 
+    private static final int NUM_MEASUREMENTS = 100;
+    private static final Timestamp SAMPLE_TIME = new Timestamp(10000);
+    public static final long UPDATE_TIME = 100;
+    BleService svc;
+    Activity activity = this;
+    private LineGraphSeries<DataPoint> series;
     /**
      * Buttons
      */
     private ImageView next;
     private ImageView retry;
-
-    /**
-     * Graph
-     */
-    private GraphView heartGraph;
-
-    BleService svc;
-    Activity activity = this;
-    private LineGraphSeries<DataPoint> series;
-    public static final long SAMPLE_TIME = 10000;
-    private static final int NUM_MEASUREMENTS = 100;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,57 +61,61 @@ public class TestActivity extends AppCompatActivity {
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     protected void collectMeasurements() throws InterruptedException {
-        heartGraph = (GraphView) findViewById(R.id.heartrate_graph);
-        Intent intent = new Intent(this, BleService.class);
-        bindService(intent, connection, Context.BIND_AUTO_CREATE);
-
-        series = new LineGraphSeries<>();
 
         long startTime = Calendar.getInstance().getTimeInMillis();
-        int i = 0;
-        int[][] hrMeasurements = new int[NUM_MEASUREMENTS][2];
-
+        List<DataPoint> hrMeasurements = null;
+        Timestamp timeElapsed;
         long endTime;
         do {
-            Thread.sleep(100 );
+            // sleep every 100 ms to stay updated with the MC characteristic.
+            Thread.sleep(UPDATE_TIME);
 
-            if (i == NUM_MEASUREMENTS) {
+            if (hrMeasurements.size() == NUM_MEASUREMENTS - 1) {
                 break;
             }
-            hrMeasurements[i][1] = svc.getHrVal();
-            i++;
             endTime = Calendar.getInstance().getTimeInMillis();
-            double x = (int) (endTime - startTime);
-            hrMeasurements[i][0] = (int) x;
-            double y = hrMeasurements[i][1];
-            series.appendData( new DataPoint( x, y ),true,NUM_MEASUREMENTS );
-        } while (endTime - startTime < SAMPLE_TIME);
-        svc.setHRMeasurement( hrMeasurements );
+            double x = endTime;
+            double y = svc.getHrVal();
+            hrMeasurements.add(new DataPoint(x, y));
+            series.appendData(new DataPoint(x, y), true, NUM_MEASUREMENTS);
+            timeElapsed = new Timestamp((endTime - startTime));
+        } while (timeElapsed.compareTo(SAMPLE_TIME) < 0);
+        if (hrMeasurements != null) {
+            svc.setHRMeasurement(hrMeasurements);
+        }
     }
 
     protected void initListeners() {
-        next = (ImageView) findViewById(R.id.next_btn);
-        retry = (ImageView) findViewById(R.id.retry_btn);
+        ImageView next = findViewById(R.id.next_btn);
+        ImageView retry = findViewById(R.id.retry_btn);
 
-        next.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(TestActivity.this, Test2Activity.class);
-                startActivity(intent);
-                //setContentView(R.layout.activity_test2);
-            }
+        next.setOnClickListener(view -> {
+            Intent intent = new Intent(TestActivity.this, Test2Activity.class);
+            startActivity(intent);
+            //setContentView(R.layout.activity_test2);
         });
 
-        retry.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(TestActivity.this, TestActivity.class);
-                startActivity(intent);
-            }
+        retry.setOnClickListener(view -> {
+            Intent intent = new Intent(TestActivity.this, TestActivity.class);
+            startActivity(intent);
         });
     }
+    private void initGraph() {
+        GraphView heartGraph = findViewById(R.id.heartrate_graph);
+        Intent intent = new Intent(activity, BleService.class);
+        bindService(intent, connection, Context.BIND_AUTO_CREATE);
 
-    private ServiceConnection connection = new ServiceConnection() {
+        series = new LineGraphSeries<>();
+        heartGraph.addSeries(series);
+
+        Viewport viewport = heartGraph.getViewport();
+        viewport.setYAxisBoundsManual(true);
+        viewport.setMinY(0);
+        viewport.setMaxY(200);
+        viewport.setScalable(true);
+    }
+
+    private final ServiceConnection connection = new ServiceConnection() {
 
         @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
         @Override
@@ -123,11 +125,20 @@ public class TestActivity extends AppCompatActivity {
             svc = binder.getService();
             svc.notifyHR(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
             Log.i("PAIRED", "Notifying service...");
-            try {
-                collectMeasurements();
-            } catch (InterruptedException e) {
-                Log.i("FORM","error");
-            }
+
+            // initialize graph.
+            initGraph();
+
+            // update graph with data points in the background.
+            new Thread(() -> {
+                try {
+                    Log.i("MEASUREMENT_THREAD", "Collecting measurements...");
+                    collectMeasurements();
+                } catch (InterruptedException e) {
+                    Log.e("MEASUREMENT_THREAD", e.toString());
+                }
+            }).start();
+
         }
 
         @Override

@@ -3,9 +3,15 @@ package com.example.respiratorapp;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
+import android.bluetooth.BluetoothGattDescriptor;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -34,6 +40,9 @@ public class FormActivity extends AppCompatActivity {
     private EditText username;
     private EditText password;
     private ImageView submitButton;
+    private Activity activity = this;
+    private UserService userService;
+    private RespiratoryUser user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +69,7 @@ public class FormActivity extends AppCompatActivity {
         username = (EditText) findViewById(R.id.editTextUsername);
         password = (EditText) findViewById(R.id.editTextPassword);
 
-        String[] activities = new String[]{"LOW", "MODERATE", "HIGH" };
+        String[] activities = new String[]{"LOW", "MODERATE", "HIGH"};
         String[] sexes = new String[]{"MALE", "FEMALE"};
         //creates a dropdown menu with array contents of each string[]
         ArrayAdapter<String> activitiesAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, activities);
@@ -84,40 +93,59 @@ public class FormActivity extends AppCompatActivity {
 
                 //sets the selected drop down value to equal the switch for sex
                 RespiratoryUser.Sex sexValue;
-                if (sex.getSelectedItem().toString() == "MALE" ) {
+                if (sex.getSelectedItem().toString() == "MALE") {
                     sexValue = RespiratoryUser.Sex.MALE;
-                }
-                else {
+                } else {
                     sexValue = RespiratoryUser.Sex.FEMALE;
                 }
 
                 //sets the selected drop down value to equal the switch for ActivityLevel
                 RespiratoryUser.ActivityLevel activityLevelValue;
-                if (activityLevel.getSelectedItem().toString() == "LOW"){
+                if (activityLevel.getSelectedItem().toString() == "LOW") {
                     activityLevelValue = RespiratoryUser.ActivityLevel.LOW;
-                }
-                else if (activityLevel.getSelectedItem().toString() == "MODERATE"){
+                } else if (activityLevel.getSelectedItem().toString() == "MODERATE") {
                     activityLevelValue = RespiratoryUser.ActivityLevel.MODERATE;
-                }
-                else{
+                } else {
                     activityLevelValue = RespiratoryUser.ActivityLevel.HIGH;
                 }
 
-                //initializes a RespiratoryUser user to have the contents of the form page
-                RespiratoryUser user = new RespiratoryUser(usernameValue, passwordValue, nameValue,
+                //initializes a user to have the contents of the form page
+                user = new RespiratoryUser(usernameValue, passwordValue, nameValue,
                         sexValue, activityLevelValue, ageValue, heightValue, weightValue);
-                try{
+
+                Intent userServiceIntent = new Intent(activity, UserService.class);
+                bindService(userServiceIntent, connection, Context.BIND_AUTO_CREATE);
+
+                try {
                     user.saveUser(getApplicationContext());
+                } catch (IOException e) {
+                    Log.i("FORM", "Failed to save this session's user."); //catches an exception if the form is not filled properly
                 }
 
-                catch  (IOException e) {
-                    Log.i("FORM", "An exception has occurred."); //catches an exception if the form is not filled properly
-                }
-                SessionManagement sessionManagement = new SessionManagement(getApplicationContext());
-                sessionManagement.saveSession(user);
-                Intent intent = new Intent(FormActivity.this, LoginActivity.class);
+                Intent intent = new Intent(FormActivity.this, HomeActivity.class);
+
                 startActivity(intent);
             }
         });
     }
+
+    private ServiceConnection connection = new ServiceConnection() {
+
+        @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            Log.i("FORM", "User Service discovered.");
+            UserService.UserServiceBinder binder = (UserService.UserServiceBinder) service;
+
+            // register this user as this session's user.
+            userService = binder.getService();
+            userService.registerUser(user);
+
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+
+        }
+    };
 }
