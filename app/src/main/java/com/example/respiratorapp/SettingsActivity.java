@@ -19,8 +19,10 @@ import android.widget.ImageView;
 
 public class SettingsActivity extends AppCompatActivity {
     private ImageView homeButton;
+    private ImageView logoutButton;
     private final Activity activity = this;
     private UserService userService;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,6 +46,7 @@ public class SettingsActivity extends AppCompatActivity {
 
     protected void initListeners() {
         homeButton = (ImageView) findViewById(R.id.home);
+        logoutButton = (ImageView) findViewById(R.id.logout);
         homeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -51,7 +54,17 @@ public class SettingsActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+        logoutButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent userServiceIntent = new Intent(activity, UserService.class);
+                bindService(userServiceIntent, connection, Context.BIND_AUTO_CREATE);
+                Intent intent = new Intent(SettingsActivity.this, UserActivity.class);
+                startActivity(intent);
+            }
+        });
     }
+
     private ServiceConnection connection = new ServiceConnection() {
 
         @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
