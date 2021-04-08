@@ -9,11 +9,13 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 
 /**
- * @brief Represents the home screen of our applications
+ * @brief Represents the home screen of our application
  */
 public class HomeActivity extends Activity {
 
-    //buttons on home screen
+    /**
+     * Buttons
+     */
     private ImageView pairButton;
     private ImageView settingsCog;
     private ImageView beginTestButton;
@@ -33,10 +35,9 @@ public class HomeActivity extends Activity {
 
         initListeners();
 
-
     }
 
-    protected void initListeners(){
+    protected void initListeners() {
         pairButton = (ImageView) findViewById(R.id.pair_btn);
         contactButton = (ImageView) findViewById(R.id.contact_btn);
         settingsCog = (ImageView) findViewById(R.id.settings_cog);

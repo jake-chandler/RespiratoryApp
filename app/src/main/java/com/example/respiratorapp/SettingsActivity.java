@@ -16,7 +16,9 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
-
+/**
+ * @brief Represents the settings screen of our application
+ */
 public class SettingsActivity extends AppCompatActivity {
     private ImageView homeButton;
     private ImageView logoutButton;
@@ -35,6 +37,7 @@ public class SettingsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_settings);
 
         initListeners();
+
     }
 
     protected void initListeners() {

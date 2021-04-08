@@ -1,4 +1,4 @@
- package com.example.respiratorapp;
+package com.example.respiratorapp;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -9,10 +9,19 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
 
- /**
-  * Represents the BLE pairing process. Attempts to pair to the MC.
-  */
+/**
+ * Represents the new or returning user screen
+ */
 public class UserActivity extends AppCompatActivity {
+
+    /**
+     * Buttons
+     */
+    private ImageView newUser;
+    private ImageView newUser2;
+    private ImageView existUser;
+    private ImageView existUser2;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,10 +36,7 @@ public class UserActivity extends AppCompatActivity {
         initListeners();
 
     }
-    private ImageView newUser;
-    private ImageView newUser2;
-    private ImageView existUser;
-    private ImageView existUser2;
+
     protected void initListeners() {
         newUser = (ImageView) findViewById(R.id.new_usr_btn);
         newUser2 = (ImageView) findViewById(R.id.new_usr);

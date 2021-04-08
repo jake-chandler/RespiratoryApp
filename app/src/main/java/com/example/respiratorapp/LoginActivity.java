@@ -20,11 +20,17 @@ import android.widget.ImageView;
 
 import java.io.FileNotFoundException;
 
+/**
+ * @brief Represents the login screen of our application
+ */
 public class LoginActivity extends AppCompatActivity {
+
     private RespiratoryUser user;
+
     private EditText username;
     private final Activity activity = this;
     private EditText password;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,6 +44,26 @@ public class LoginActivity extends AppCompatActivity {
 
         initListeners();
     }
+    @Override
+    public void onStart(){
+        super.onStart();
+        checkSession();
+    }
+
+    private void checkSession(){
+        SessionManagement sessionManagement = new SessionManagement((getApplicationContext()));
+        String userID = sessionManagement.getSession();
+
+        if(userID != "-1"){
+            Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+        }
+        else{
+            //do nothing
+        }
+    }
+
 
     private void initListeners() {
         ImageView submitButton;
@@ -60,6 +86,7 @@ public class LoginActivity extends AppCompatActivity {
                         bindService(userServiceIntent, userServiceConnection, Context.BIND_AUTO_CREATE);
                         // continue to home page.
                         Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(intent);
                     }
                     else{

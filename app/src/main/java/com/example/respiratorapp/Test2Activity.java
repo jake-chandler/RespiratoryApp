@@ -25,6 +25,9 @@ import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.List;
 
+/**
+ * @brief Represents the BO2 test screen of our application
+ */
 public class Test2Activity extends AppCompatActivity {
 
     private static final int NUM_MEASUREMENTS = 100;
@@ -33,6 +36,12 @@ public class Test2Activity extends AppCompatActivity {
     BleService svc;
     Activity activity = this;
     private LineGraphSeries<DataPoint> series;
+    /**
+     * Buttons
+     */
+    private ImageView next;
+    private ImageView retry;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
