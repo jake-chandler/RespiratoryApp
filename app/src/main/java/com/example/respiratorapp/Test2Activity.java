@@ -24,7 +24,6 @@ import com.jjoe64.graphview.series.LineGraphSeries;
 
 import java.sql.Timestamp;
 import java.util.Calendar;
-import java.util.List;
 
 public class Test2Activity extends AppCompatActivity {
 
@@ -75,7 +74,7 @@ public class Test2Activity extends AppCompatActivity {
             elapsedTime = endTime - startTime;
 
             // trim time value down to one decimal place.
-            double x = elapsedTime / 1000;
+            double x = elapsedTime / 1000.00;
             x = x * Math.pow(10, 1);
             x = Math.floor(x);
             x = x / Math.pow(10, 1);

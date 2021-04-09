@@ -23,7 +23,6 @@ import com.jjoe64.graphview.series.LineGraphSeries;
 
 import java.sql.Timestamp;
 import java.util.Calendar;
-import java.util.List;
 
 public class Test3Activity extends AppCompatActivity {
 
@@ -77,7 +76,7 @@ public class Test3Activity extends AppCompatActivity {
             elapsedTime = endTime - startTime;
 
             // trim down to one decimal place.
-            double x = endTime / 1000;
+            double x = endTime / 1000.00;
             x = x * Math.pow(10, 1);
             x = Math.floor(x);
             x = x / Math.pow(10, 1);

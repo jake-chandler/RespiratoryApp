@@ -1,8 +1,5 @@
 package com.example.respiratorapp;
 
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.Activity;
 import android.bluetooth.BluetoothGattDescriptor;
 import android.content.ComponentName;
@@ -12,7 +9,6 @@ import android.content.ServiceConnection;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -20,10 +16,10 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.jjoe64.graphview.series.DataPoint;
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AppCompatActivity;
 
 import java.io.IOException;
-import java.util.List;
 
 public class RiskAssessmentActivity extends AppCompatActivity {
 

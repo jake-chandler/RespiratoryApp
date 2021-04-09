@@ -9,12 +9,10 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.graphics.Point;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
-import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
@@ -26,8 +24,6 @@ import com.jjoe64.graphview.series.LineGraphSeries;
 
 import java.sql.Timestamp;
 import java.util.Calendar;
-import java.util.LinkedList;
-import java.util.List;
 
 public class TestActivity extends AppCompatActivity {
 
@@ -80,7 +76,7 @@ public class TestActivity extends AppCompatActivity {
             elapsedTime = endTime - startTime;
 
             // trim down to one decimal place.
-            double x = endTime / 1000;
+            double x = endTime / 1000.00;
             x = x * Math.pow(10, 1);
             x = Math.floor(x);
             x = x / Math.pow(10, 1);
