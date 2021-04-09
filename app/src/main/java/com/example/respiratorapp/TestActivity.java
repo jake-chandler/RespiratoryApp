@@ -9,6 +9,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.graphics.Point;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -25,10 +26,12 @@ import com.jjoe64.graphview.series.LineGraphSeries;
 
 import java.sql.Timestamp;
 import java.util.Calendar;
+import java.util.LinkedList;
 import java.util.List;
 
 public class TestActivity extends AppCompatActivity {
 
+    private static final String LOGGER_INFO = "TestActivity";
     private static final int NUM_MEASUREMENTS = 100;
     private static final Timestamp SAMPLE_TIME = new Timestamp(10000);
     public static final long UPDATE_TIME = 100;
@@ -49,35 +52,52 @@ public class TestActivity extends AppCompatActivity {
 
         initListeners();
 
+        Intent intent = new Intent(activity, BleService.class);
+        bindService(intent, connection, Context.BIND_AUTO_CREATE);
+
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     protected void collectMeasurements() throws InterruptedException {
 
         long startTime = Calendar.getInstance().getTimeInMillis();
-        List<DataPoint> hrMeasurements = null;
+        double[][] hrMeasurements = new double[1000][2];
+        int i = 0;
+        long elapsedTime, endTime;
         Timestamp timeElapsed;
-        long endTime;
         do {
             // sleep every 100 ms to stay updated with the MC characteristic.
             Thread.sleep(UPDATE_TIME);
 
-            if (hrMeasurements.size() == NUM_MEASUREMENTS - 1) {
+            if (i == NUM_MEASUREMENTS - 1) {
                 break;
             }
+            // calculate elapsed time
             endTime = Calendar.getInstance().getTimeInMillis();
-            double x = endTime;
+            elapsedTime = endTime - startTime;
+
+            // trim down to one decimal place.
+            double x = endTime / 1000;
+            x = x * Math.pow(10, 1);
+            x = Math.floor(x);
+            x = x / Math.pow(10, 1);
             double y = svc.getHrVal();
-            hrMeasurements.add(new DataPoint(x, y));
+
+            // populate the measurement data structure
+            hrMeasurements[i][0] = endTime;
+            hrMeasurements[i][1] = y;
             series.appendData(new DataPoint(x, y), true, NUM_MEASUREMENTS);
-            timeElapsed = new Timestamp((endTime - startTime));
+            timeElapsed = new Timestamp(elapsedTime);
+            i++;
         } while (timeElapsed.compareTo(SAMPLE_TIME) < 0);
         if (hrMeasurements != null) {
+            // save the measurements with the ble service.
             svc.setHRMeasurement(hrMeasurements);
         }
     }
 
     protected void initListeners() {
+        Log.i(LOGGER_INFO, "Initializing button listeners.");
         ImageView next = findViewById(R.id.next_btn);
         ImageView retry = findViewById(R.id.retry_btn);
 
@@ -91,20 +111,22 @@ public class TestActivity extends AppCompatActivity {
             Intent intent = new Intent(TestActivity.this, TestActivity.class);
             startActivity(intent);
         });
+        Log.i(LOGGER_INFO, "Button Listeners successfully identified");
     }
     private void initGraph() {
+        Log.i(LOGGER_INFO, "Initializing graph.");
         GraphView heartGraph = findViewById(R.id.heartrate_graph);
-        Intent intent = new Intent(activity, BleService.class);
-        bindService(intent, connection, Context.BIND_AUTO_CREATE);
 
         series = new LineGraphSeries<>();
         heartGraph.addSeries(series);
 
         Viewport viewport = heartGraph.getViewport();
-        viewport.setYAxisBoundsManual(true);
-        viewport.setMinY(0);
-        viewport.setMaxY(200);
+        viewport.setYAxisBoundsManual(false);
+        viewport.setXAxisBoundsManual(true);
+
         viewport.setScalable(true);
+        viewport.setScrollable(true);
+        Log.i(LOGGER_INFO, "Graph initialized.");
     }
 
     private final ServiceConnection connection = new ServiceConnection() {
@@ -112,11 +134,12 @@ public class TestActivity extends AppCompatActivity {
         @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-            Log.i("PAIRED", "Ble Service discovered.");
+            Log.i(LOGGER_INFO, "Ble Service discovered.");
             BleService.BleServiceBinder binder = (BleService.BleServiceBinder) service;
             svc = binder.getService();
+            Log.i(LOGGER_INFO, "Notifying service...");
             svc.notifyHR(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
-            Log.i("PAIRED", "Notifying service...");
+
 
             // initialize graph.
             initGraph();
@@ -124,10 +147,11 @@ public class TestActivity extends AppCompatActivity {
             // update graph with data points in the background.
             new Thread(() -> {
                 try {
-                    Log.i("MEASUREMENT_THREAD", "Collecting measurements...");
+                    Log.i(LOGGER_INFO, "Collecting measurements.");
                     collectMeasurements();
+                    Log.i(LOGGER_INFO, "Measurements collected.");
                 } catch (InterruptedException e) {
-                    Log.e("MEASUREMENT_THREAD", e.toString());
+                    Log.e(LOGGER_INFO, "Error collecting measurements.");
                 }
             }).start();
 

@@ -53,6 +53,7 @@ public class Test3Activity extends AppCompatActivity {
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     protected void collectMeasurements() throws InterruptedException {
+        /**
         long startTime = Calendar.getInstance().getTimeInMillis();
         List<DataPoint> rrMeasurements = null;
         Timestamp timeElapsed;
@@ -79,6 +80,7 @@ public class Test3Activity extends AppCompatActivity {
         if (rrMeasurements != null) {
             svc.setRRMeasurements(rrMeasurements);
         }
+         **/
     }
 
 

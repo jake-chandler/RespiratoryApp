@@ -38,6 +38,7 @@ public class RiskAssessmentActivity extends AppCompatActivity {
     TestResults.HR_RiskAssessment hrRisk;
     TestResults.RR_RiskAssessment rrRisk;
     TestResults.B02_RiskAssessment b02Risk;
+    double[][] hrMeas, rrMeas, b02Meas;
     TestResults.RiskAssessment riskAssessment;
 
 
@@ -109,7 +110,6 @@ public class RiskAssessmentActivity extends AppCompatActivity {
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private void runTest() {
-        List<DataPoint> hrMeas, rrMeas, b02Meas;
 
         // retrieve measurement data from BleService.
         hrMeas = ble_svc.getHRMeasurement();
@@ -145,9 +145,9 @@ public class RiskAssessmentActivity extends AppCompatActivity {
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private void calculateHrRisk() {
-        for (DataPoint measurement : ble_svc.getHRMeasurement()) {
+        for (int i = 0; i < NUM_MEASUREMENTS; i++) {
  
-            double heartRate = measurement.getY();
+            double heartRate = hrMeas[i][1];
             // TODO: Set heart rate threshold values based on age.
             int upperThreshold = 0, lowerThreshold = 0;
             if (user.getAge() > 60) {
@@ -155,7 +155,7 @@ public class RiskAssessmentActivity extends AppCompatActivity {
                     
                 }
             }
-            if (lowerThreshold <heartRate && heartRate < upperThreshold) {
+            if (lowerThreshold < heartRate && heartRate < upperThreshold) {
                 // normal
                 hrRisk = TestResults.HR_RiskAssessment.LOW;
             } else {
@@ -165,14 +165,10 @@ public class RiskAssessmentActivity extends AppCompatActivity {
     }
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private void calculateRrRisk() {
-        for (DataPoint measurement : ble_svc.getRRMeasurement()) {
-            double time = measurement.getX();
-        }
+
     }
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private void calculateB02Risk() {
-        for (DataPoint measurement : ble_svc.getB02Measurement()) {
-            
-        }
+
     }
 }

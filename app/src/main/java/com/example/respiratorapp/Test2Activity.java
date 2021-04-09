@@ -51,8 +51,9 @@ public class Test2Activity extends AppCompatActivity {
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     protected void collectMeasurements() throws InterruptedException {
+        /**
         long startTime = Calendar.getInstance().getTimeInMillis();
-        List<DataPoint> b02Measurements = null;
+        double[][] b02Measurements = null;
         Timestamp timeElapsed;
         long endTime;
         Log.i("MEASUREMENT_THREAD", "Updating live graph...");
@@ -75,6 +76,7 @@ public class Test2Activity extends AppCompatActivity {
         if (b02Measurements != null) {
             svc.setB02Measurements(b02Measurements);
         }
+         **/
     }
 
     protected void initListeners() {

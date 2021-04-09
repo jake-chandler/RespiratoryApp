@@ -38,12 +38,14 @@ public class PairingActivity extends Activity {
 
     BleService svc;
     Activity activity = this;
-    ServiceConnection connection;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        /**
+         Intent intent = new Intent(PairingActivity.this, PairedActivity.class);
+         startActivity(intent);
+         */
 
         //makes this activity full-screen (removes notification bar)
         requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -56,33 +58,27 @@ public class PairingActivity extends Activity {
 
 
         bindService(intent, connection, Context.BIND_AUTO_CREATE);
-        Log.i("PAIRING", "4");
 
 
-        /**
-         Intent intent = new Intent(PairingActivity.this, PairedActivity.class);
-         startActivity(intent);
-         */
 
-
-        ServiceConnection connection = new ServiceConnection() {
-
-            @Override
-            public void onServiceConnected(ComponentName name, IBinder service) {
-                Log.i("PAIRING", "Ble Service discovered.");
-                BleService.BleServiceBinder binder = (BleService.BleServiceBinder) service;
-                svc = binder.getService();
-                svc.setActivity(activity);
-                svc.setContext(getApplicationContext());
-                Intent intent = new Intent(activity, BleService.class);
-                startService(intent);
-
-            }
-
-            @Override
-            public void onServiceDisconnected(ComponentName name) {
-                Log.i("PAIRING", "Service unbounded from this activity.");
-            }
-        };
     }
+    ServiceConnection connection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            Log.i("PAIRING", "Ble Service discovered.");
+            BleService.BleServiceBinder binder = (BleService.BleServiceBinder) service;
+            svc = binder.getService();
+            svc.setActivity(activity);
+            svc.setContext(getApplicationContext());
+            Intent intent = new Intent(activity, BleService.class);
+            startService(intent);
+
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            Log.i("PAIRING", "Service unbounded from this activity.");
+        }
+    };
 }
