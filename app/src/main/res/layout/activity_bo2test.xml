@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".TestActivity">
+    tools:context=".BO2TestActivity">
 
     <ImageView
         android:id="@+id/background"
@@ -18,17 +18,17 @@
         tools:layout_editor_absoluteY="173dp" />
 
     <ImageView
-        android:id="@+id/heartrate"
+        android:id="@+id/oxygen_level"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="79dp"
         android:layout_marginTop="120dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/heart_rate" />
+        app:srcCompat="@drawable/oxygen_level" />
 
     <com.jjoe64.graphview.GraphView
-        android:id="@+id/heartrate_graph"
+        android:id="@+id/oxygen_graph"
         android:layout_width="379dp"
         android:layout_height="200dip"
         android:layout_marginStart="16dp"
@@ -55,15 +55,5 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/green_arrow" />
-
-    <ImageView
-        android:id="@+id/finger"
-        android:layout_width="154dp"
-        android:layout_height="105dp"
-        android:layout_marginStart="128dp"
-        android:layout_marginBottom="176dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@drawable/finger" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

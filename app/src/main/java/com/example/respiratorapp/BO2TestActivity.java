@@ -1,22 +1,22 @@
 package com.example.respiratorapp;
 
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.Activity;
-import android.bluetooth.BluetoothGattDescriptor;
+import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
-import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
+
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.Viewport;
@@ -28,13 +28,13 @@ import java.util.Calendar;
 import java.util.List;
 
 /**
- * @brief Represents the heart rate test screen of our application
+ * @brief Represents the BO2 test screen of our application
  */
-public class TestActivity extends AppCompatActivity {
+public class BO2TestActivity extends AppCompatActivity {
 
     private static final int NUM_MEASUREMENTS = 100;
     private static final Timestamp SAMPLE_TIME = new Timestamp(10000);
-    public static final long UPDATE_TIME = 100;
+    private static final int UPDATE_TIME = 100;
     BleService svc;
     Activity activity = this;
     private LineGraphSeries<DataPoint> series;
@@ -43,6 +43,7 @@ public class TestActivity extends AppCompatActivity {
      */
     private ImageView next;
     private ImageView retry;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,67 +54,85 @@ public class TestActivity extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-        setContentView(R.layout.activity_test);
+        setContentView(R.layout.activity_bo2test);
 
         initListeners();
+    }
 
+    public void onStart() {
+        super.onStart();
+        // Instantiate an AlertDialog.Builder with its constructor
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        // Chain together various setter methods to set the dialog characteristics
+        builder.setMessage("Please put on the Pulse Oximetry sensor");
+                builder.setNegativeButton("ok", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // User cancelled the dialog
+                    }
+                });
+        // Create the AlertDialog
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     protected void collectMeasurements() throws InterruptedException {
-
         long startTime = Calendar.getInstance().getTimeInMillis();
-        List<DataPoint> hrMeasurements = null;
+        List<DataPoint> b02Measurements = null;
         Timestamp timeElapsed;
         long endTime;
+        Log.i("MEASUREMENT_THREAD", "Updating live graph...");
         do {
-            // sleep every 100 ms to stay updated with the MC characteristic.
+            if (b02Measurements.size() == NUM_MEASUREMENTS) { break; }
+            // sleep this thread UPDATE_TIME milliseconds. to ensure retrieval of latest measurement from the sensor device.
             Thread.sleep(UPDATE_TIME);
-
-            if (hrMeasurements.size() == NUM_MEASUREMENTS - 1) {
-                break;
-            }
             endTime = Calendar.getInstance().getTimeInMillis();
-            double x = endTime;
-            double y = svc.getHrVal();
-            hrMeasurements.add(new DataPoint(x, y));
-            series.appendData(new DataPoint(x, y), true, NUM_MEASUREMENTS);
+
+            // get the metric from the Ble Service
+            double time = endTime;
+            double b02 =    svc.getHrVal();;
+
+            // plot metric to graph.
+            series.appendData( new DataPoint( time, b02),true,NUM_MEASUREMENTS );
+            b02Measurements.add(new DataPoint(time, b02));
             timeElapsed = new Timestamp((endTime - startTime));
         } while (timeElapsed.compareTo(SAMPLE_TIME) < 0);
-        if (hrMeasurements != null) {
-            svc.setHRMeasurement(hrMeasurements);
+        // save measurements with the BLE service.
+        if (b02Measurements != null) {
+            svc.setB02Measurements(b02Measurements);
         }
     }
 
     protected void initListeners() {
         ImageView next = findViewById(R.id.next_btn);
         ImageView retry = findViewById(R.id.retry_btn);
-
         next.setOnClickListener(view -> {
-            Intent intent = new Intent(TestActivity.this, Test2Activity.class);
+            Intent intent = new Intent(BO2TestActivity.this, RRTestActivity.class);
             startActivity(intent);
-            //setContentView(R.layout.activity_test2);
         });
-
         retry.setOnClickListener(view -> {
-            Intent intent = new Intent(TestActivity.this, TestActivity.class);
+            Intent intent = new Intent(BO2TestActivity.this, BO2TestActivity.class);
             startActivity(intent);
         });
     }
+
     private void initGraph() {
-        GraphView heartGraph = findViewById(R.id.heartrate_graph);
+        GraphView BO2Graph = findViewById(R.id.oxygen_graph);
         Intent intent = new Intent(activity, BleService.class);
         bindService(intent, connection, Context.BIND_AUTO_CREATE);
 
         series = new LineGraphSeries<>();
-        heartGraph.addSeries(series);
+        BO2Graph.addSeries(series);
 
-        Viewport viewport = heartGraph.getViewport();
+        Viewport viewport = BO2Graph.getViewport();
         viewport.setYAxisBoundsManual(true);
         viewport.setMinY(0);
-        viewport.setMaxY(200);
-        viewport.setScalable(true);
+        viewport.setMaxY(100);
+        viewport.setScrollable(true);
+
     }
+
+
 
     private final ServiceConnection connection = new ServiceConnection() {
 
@@ -121,24 +140,19 @@ public class TestActivity extends AppCompatActivity {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             Log.i("PAIRED", "Ble Service discovered.");
-            BleService.BleServiceBinder binder = (BleService.BleServiceBinder) service;
-            svc = binder.getService();
-            svc.notifyHR(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
-            Log.i("PAIRED", "Notifying service...");
-
             // initialize graph.
             initGraph();
 
             // update graph with data points in the background.
             new Thread(() -> {
                 try {
-                    Log.i("MEASUREMENT_THREAD", "Collecting measurements...");
+                    Log.i("MEASUREMENT_THREAD", "Collecting measurements.");
                     collectMeasurements();
+                    Log.i("MEASUREMENT_THREAD", "Collected measurements!");
                 } catch (InterruptedException e) {
                     Log.e("MEASUREMENT_THREAD", e.toString());
                 }
             }).start();
-
         }
 
         @Override
@@ -146,4 +160,5 @@ public class TestActivity extends AppCompatActivity {
             Log.i("PAIRED", "Service unbounded from this activity.");
         }
     };
+
 }

@@ -44,25 +44,6 @@ public class LoginActivity extends AppCompatActivity {
 
         initListeners();
     }
-    @Override
-    public void onStart(){
-        super.onStart();
-        checkSession();
-    }
-
-    private void checkSession(){
-        SessionManagement sessionManagement = new SessionManagement((getApplicationContext()));
-        String userID = sessionManagement.getSession();
-
-        if(userID != "-1"){
-            Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
-        }
-        else{
-            //do nothing
-        }
-    }
 
 
     private void initListeners() {

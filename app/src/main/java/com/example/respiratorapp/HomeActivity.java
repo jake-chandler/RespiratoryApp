@@ -67,7 +67,7 @@ public class HomeActivity extends Activity {
         beginTestButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(HomeActivity.this, TestActivity.class);
+                Intent intent = new Intent(HomeActivity.this, HRTestActivity.class);
                 startActivity(intent);
             }
         });

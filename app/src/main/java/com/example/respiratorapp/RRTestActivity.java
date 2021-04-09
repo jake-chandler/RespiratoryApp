@@ -1,8 +1,10 @@
 package com.example.respiratorapp;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Build;
@@ -28,7 +30,7 @@ import java.util.List;
 /**
  * @brief Represents the respiratory rate test screen of our application
  */
-public class Test3Activity extends AppCompatActivity {
+public class RRTestActivity extends AppCompatActivity {
     private static final int NUM_MEASUREMENTS = 100;
     private static final Timestamp SAMPLE_TIME = new Timestamp(10000);
     private static final int UPDATE_TIME = 100;
@@ -51,10 +53,25 @@ public class Test3Activity extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-        setContentView(R.layout.activity_test3);
+        setContentView(R.layout.activity_rrtest);
 
         initListeners();
 
+    }
+    public void onStart() {
+        super.onStart();
+        // Instantiate an AlertDialog.Builder with its constructor
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        // Chain together various setter methods to set the dialog characteristics
+        builder.setMessage("Please put on the Microphone Sensor");
+        builder.setNegativeButton("ok", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User cancelled the dialog
+            }
+        });
+        // Create the AlertDialog
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -91,11 +108,11 @@ public class Test3Activity extends AppCompatActivity {
         ImageView next = findViewById(R.id.next_btn);
         ImageView retry = findViewById(R.id.retry_btn);
         next.setOnClickListener(view -> {
-            Intent intent = new Intent(Test3Activity.this, RiskAssessmentActivity.class);
+            Intent intent = new Intent(RRTestActivity.this, RiskAssessmentActivity.class);
             startActivity(intent);
         });
         retry.setOnClickListener(view -> {
-            Intent intent = new Intent(Test3Activity.this, Test3Activity.class);
+            Intent intent = new Intent(RRTestActivity.this, RRTestActivity.class);
             startActivity(intent);
         });
     }

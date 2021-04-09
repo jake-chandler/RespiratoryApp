@@ -20,9 +20,9 @@
         <activity android:name=".RiskAssessmentActivity"></activity>
         <activity android:name=".LoginActivity" />
         <activity android:name=".UserActivity" />
-        <activity android:name=".Test3Activity" />
-        <activity android:name=".Test2Activity" />
-        <activity android:name=".TestActivity" />
+        <activity android:name=".RRTestActivity" />
+        <activity android:name=".BO2TestActivity" />
+        <activity android:name=".HRTestActivity" />
         <activity android:name=".ContributionActivity" />
         <activity android:name=".FormActivity" />
         <activity android:name=".ResultsActivity" />
