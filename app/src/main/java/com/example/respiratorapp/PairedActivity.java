@@ -27,6 +27,7 @@ public class PairedActivity extends AppCompatActivity {
     private ImageView home_btn;
     BleService svc;
     Activity activity = this;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

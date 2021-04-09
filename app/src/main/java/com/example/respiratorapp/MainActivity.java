@@ -19,11 +19,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        if (!getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)){
+        if (!getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {
             // handle this later
         }
         super.onCreate(savedInstanceState);
-
 
 
         //makes this activity full-screen (removes notification bar)
@@ -34,16 +33,17 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         //change to home screen after 3 sec
-        (new Handler()).postDelayed(this::changeScreens,3000);
+        (new Handler()).postDelayed(this::changeScreens, 3000);
 
     }
+
     /**
      * Helper method used to change to home screen
      *
-     * @param 
+     * @param
      * @return void
      */
-    public void changeScreens(){
+    public void changeScreens() {
         Intent intent = new Intent(MainActivity.this, UserActivity.class);
         startActivity(intent);
     }

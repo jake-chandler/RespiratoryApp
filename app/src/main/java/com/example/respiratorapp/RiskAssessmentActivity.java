@@ -24,7 +24,7 @@ import java.io.IOException;
 public class RiskAssessmentActivity extends AppCompatActivity {
 
     private static final int NUM_MEASUREMENTS = 100;
-    private BleService ble_svc;
+    private BleService bleService;
     private final Activity activity = this;
     private RespiratoryUser user;
     ImageView export, home;
@@ -91,8 +91,8 @@ public class RiskAssessmentActivity extends AppCompatActivity {
         public void onServiceConnected(ComponentName name, IBinder service) {
             Log.i("PAIRED", "Ble Service discovered.");
             BleService.BleServiceBinder binder = (BleService.BleServiceBinder) service;
-            ble_svc = binder.getService();
-            ble_svc.notifyHR(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
+            bleService = binder.getService();
+            bleService.notifyHR(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
             Log.i("PAIRED", "Notifying service...");
             runTest();
 
@@ -108,9 +108,9 @@ public class RiskAssessmentActivity extends AppCompatActivity {
     private void runTest() {
 
         // retrieve measurement data from BleService.
-        hrMeas = ble_svc.getHRMeasurement();
-        rrMeas = ble_svc.getRRMeasurement();
-        b02Meas = ble_svc.getB02Measurement();
+        hrMeas = bleService.getHRMeasurement();
+        rrMeas = bleService.getRRMeasurement();
+        b02Meas = bleService.getB02Measurement();
         
         test.saveTestResults(this);
         user.addTestResult(test.getTestID());
