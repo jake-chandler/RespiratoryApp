@@ -65,14 +65,17 @@ public class TestActivity extends AppCompatActivity {
         int i = 0;
         long elapsedTime, endTime;
         Timestamp timeElapsed;
+        Log.i("MEASUREMENT_THREAD", "Updating live graph...");
+        // take measurements for SAMPLE_TIME milliseconds or until we've achieved the NUM_MEASUREMENTS of measurements.
+        // theoretically, it should take SAMPLE_TIME milliseconds in order to reach NUM_MEASUREMENTS measurements.
         do {
-            // sleep every 100 ms to stay updated with the MC characteristic.
+            // this is to prevent slight update timing issues that may arise.
             Thread.sleep(UPDATE_TIME);
 
             if (i == NUM_MEASUREMENTS - 1) {
                 break;
             }
-            // calculate elapsed time
+            // calculate elapsed time.
             endTime = Calendar.getInstance().getTimeInMillis();
             elapsedTime = endTime - startTime;
 
@@ -81,6 +84,8 @@ public class TestActivity extends AppCompatActivity {
             x = x * Math.pow(10, 1);
             x = Math.floor(x);
             x = x / Math.pow(10, 1);
+
+            //retrieve metric from ble service.
             double y = svc.getHrVal();
 
             // populate the measurement data structure
@@ -90,10 +95,10 @@ public class TestActivity extends AppCompatActivity {
             timeElapsed = new Timestamp(elapsedTime);
             i++;
         } while (timeElapsed.compareTo(SAMPLE_TIME) < 0);
-        if (hrMeasurements != null) {
-            // save the measurements with the ble service.
-            svc.setHRMeasurement(hrMeasurements);
-        }
+
+        // save the measurements with the ble service.
+        svc.setHRMeasurement(hrMeasurements);
+
     }
 
     protected void initListeners() {
@@ -113,6 +118,7 @@ public class TestActivity extends AppCompatActivity {
         });
         Log.i(LOGGER_INFO, "Button Listeners successfully identified");
     }
+
     private void initGraph() {
         Log.i(LOGGER_INFO, "Initializing graph.");
         GraphView heartGraph = findViewById(R.id.heartrate_graph);

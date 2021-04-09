@@ -42,10 +42,6 @@ public class PairingActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        /**
-         Intent intent = new Intent(PairingActivity.this, PairedActivity.class);
-         startActivity(intent);
-         */
 
         //makes this activity full-screen (removes notification bar)
         requestWindowFeature(Window.FEATURE_NO_TITLE);

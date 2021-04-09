@@ -30,6 +30,7 @@ public class Test3Activity extends AppCompatActivity {
     private static final int NUM_MEASUREMENTS = 100;
     private static final Timestamp SAMPLE_TIME = new Timestamp(10000);
     private static final int UPDATE_TIME = 100;
+    private static final String LOGGER_INFO = "Test3Activity";
     BleService svc;
     Activity activity = this;
     private LineGraphSeries<DataPoint> series;
@@ -47,40 +48,54 @@ public class Test3Activity extends AppCompatActivity {
         setContentView(R.layout.activity_test3);
 
         initListeners();
+        Intent intent = new Intent(activity, BleService.class);
+        bindService(intent, connection, Context.BIND_AUTO_CREATE);
 
     }
 
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     protected void collectMeasurements() throws InterruptedException {
-        /**
+
         long startTime = Calendar.getInstance().getTimeInMillis();
-        List<DataPoint> rrMeasurements = null;
+        double[][] rrMeasurements = new double[1000][2];
+        int i = 0;
+        long elapsedTime, endTime;
         Timestamp timeElapsed;
-        long endTime = 0;
         Log.i("MEASUREMENT_THREAD", "Updating live graph...");
         // take measurements for SAMPLE_TIME milliseconds or until we've achieved the NUM_MEASUREMENTS of measurements.
         // theoretically, it should take SAMPLE_TIME milliseconds in order to reach NUM_MEASUREMENTS measurements.
         do {
             // this is to prevent slight update timing issues that may arise.
-
-            if (rrMeasurements.size() == NUM_MEASUREMENTS) { break; }
-            // sleep this thread UPDATE_TIME milliseconds. to ensure retrieval of latest measurement from the sensor device.
             Thread.sleep(UPDATE_TIME);
-            endTime = Calendar.getInstance().getTimeInMillis();
-            // get the metric from the Ble Service
-            double time = endTime;
-            double rr =    svc.getRrVal();
 
-            // plot metric to graph.
-            series.appendData( new DataPoint( time, rr),true,NUM_MEASUREMENTS );
-            rrMeasurements.add(new DataPoint(time, rr));
-            timeElapsed = new Timestamp((endTime - startTime));
+            if (i == NUM_MEASUREMENTS - 1) {
+                break;
+            }
+            // calculate elapsed time.
+            endTime = Calendar.getInstance().getTimeInMillis();
+            elapsedTime = endTime - startTime;
+
+            // trim down to one decimal place.
+            double x = endTime / 1000;
+            x = x * Math.pow(10, 1);
+            x = Math.floor(x);
+            x = x / Math.pow(10, 1);
+
+            //retrieve metric from ble service.
+            double y = svc.getRrVal();
+
+            // populate the measurement data structure
+            rrMeasurements[i][0] = endTime;
+            rrMeasurements[i][1] = y;
+            series.appendData(new DataPoint(x, y), true, NUM_MEASUREMENTS);
+            timeElapsed = new Timestamp(elapsedTime);
+            i++;
         } while (timeElapsed.compareTo(SAMPLE_TIME) < 0);
-        if (rrMeasurements != null) {
-            svc.setRRMeasurements(rrMeasurements);
-        }
-         **/
+
+        // save the measurements with the ble service.
+        svc.setRRMeasurements(rrMeasurements);
+
     }
 
 
@@ -99,22 +114,20 @@ public class Test3Activity extends AppCompatActivity {
 
     private void initGraph() {
         GraphView respiratoryRateGraph = findViewById(R.id.heartrate_graph);
-        Intent intent = new Intent(activity, BleService.class);
-        bindService(intent, connection, Context.BIND_AUTO_CREATE);
+
 
         series = new LineGraphSeries<>();
-
         respiratoryRateGraph.addSeries(series);
 
         Viewport viewport = respiratoryRateGraph.getViewport();
-        viewport.setYAxisBoundsManual(true);
-        viewport.setMinY(0);
-        viewport.setMaxY(5000);
+
+        viewport.setYAxisBoundsManual(false);
+        viewport.setXAxisBoundsManual(true);
+
         viewport.setScalable(true);
-
-        //TODO add Title, X and Y axis info
+        viewport.setScrollable(true);
+        Log.i(LOGGER_INFO, "Graph initialized.");
     }
-
 
 
     private final ServiceConnection connection = new ServiceConnection() {

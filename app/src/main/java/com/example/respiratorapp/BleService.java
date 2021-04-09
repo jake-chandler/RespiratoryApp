@@ -384,6 +384,7 @@ public class BleService extends Service {
      * Helper method used to obtain the BluetoothGattDescriptor for for HR, RR, and B02 characteristics from the offered services
      *
      * @param services The services offered by the UGA sensor device.
+     * TODO: This is poorly implemented.
      */
     private void findServices(List<BluetoothGattService> services) {
         for (BluetoothGattService service : services) {
