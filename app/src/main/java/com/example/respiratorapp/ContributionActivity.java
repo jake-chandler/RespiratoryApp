@@ -9,10 +9,13 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 
 /**
- * @brief Represents the contribution screen of our applications
+ * @brief Represents the contribution screen of our application
  */
 public class ContributionActivity extends Activity {
 
+    /**
+     * Buttons
+     */
     private ImageView homeButton;
     private ImageView settingsButton;
 

@@ -62,6 +62,12 @@ public class UserService extends Service {
     public void registerUser(RespiratoryUser usr) { user = usr; }
 
     /**
+     * De-registers a specified user to be this session's user.
+     * @param usr
+     */
+    public void deregisterUser(RespiratoryUser usr) { user = null;}
+
+    /**
      * Gets this session's user.
      * @return The user.
      */

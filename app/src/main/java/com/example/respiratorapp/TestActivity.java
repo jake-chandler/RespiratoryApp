@@ -28,6 +28,9 @@ import com.jjoe64.graphview.series.LineGraphSeries;
 import java.sql.Timestamp;
 import java.util.Calendar;
 
+/**
+ * @brief Represents the heart rate test screen of our application
+ */
 public class TestActivity extends AppCompatActivity {
 
     private static final String LOGGER_INFO = "TestActivity";
@@ -37,6 +40,11 @@ public class TestActivity extends AppCompatActivity {
     BleService svc;
     Activity activity = this;
     private LineGraphSeries<DataPoint> series;
+    /**
+     * Buttons
+     */
+    private ImageView next;
+    private ImageView retry;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
