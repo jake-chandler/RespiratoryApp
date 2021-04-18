@@ -6,8 +6,12 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.pdf.PdfDocument;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.IBinder;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
@@ -20,6 +24,8 @@ import android.widget.TextView;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 
 public class RiskAssessmentActivity extends AppCompatActivity {
@@ -80,8 +86,7 @@ public class RiskAssessmentActivity extends AppCompatActivity {
         export.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(RiskAssessmentActivity.this, HomeActivity.class);
-                startActivity(intent);
+                generatePdf();
             }
         });
 
@@ -93,7 +98,34 @@ public class RiskAssessmentActivity extends AppCompatActivity {
             }
         });
     }
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    private void generatePdf() {
+        PdfDocument doc = new PdfDocument();
 
+        Paint title = new Paint();
+
+        PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(1120, 792, 1).create();
+        PdfDocument.Page page = doc.startPage(pageInfo);
+
+        Canvas canvas = page.getCanvas();
+
+        title.setTextSize(15);
+        title.setColor(getResources().getColor(R.color.black));
+        canvas.drawText("Test results on "+ test.getTestID()+"\n", 209,100,title);
+        canvas.drawText("For user "+ user.getName() + "\n", 209, 80, title);
+
+        doc.finishPage(page);
+
+        File file = new File(Environment.getExternalStorageDirectory(), test.getTestID()+".pdf");
+
+        try {
+            doc.writeTo(new FileOutputStream(file));
+        } catch (IOException e) {
+            Log.i(LOGGER_INFO, "Failed to save pdf.");
+        }
+
+
+    }
     private ServiceConnection connection = new ServiceConnection() {
 
         @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
