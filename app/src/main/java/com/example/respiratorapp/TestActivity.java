@@ -4,9 +4,11 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.bluetooth.BluetoothGattDescriptor;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Build;
@@ -18,6 +20,7 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 
 import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.GridLabelRenderer;
 import com.jjoe64.graphview.Viewport;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
@@ -38,6 +41,22 @@ public class TestActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // Instantiate an AlertDialog.Builder with its constructor
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        // Chain together various setter methods to set the dialog characteristics
+        builder.setMessage("Please put on the Heart Rate Sensor");
+        builder.setNegativeButton("ok", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User cancelled the dialog
+                initListeners();
+
+                Intent intent = new Intent(activity, BleService.class);
+                bindService(intent, connection, Context.BIND_AUTO_CREATE);
+            }
+        });
+        // Create the AlertDialog
+        AlertDialog dialog = builder.create();
+        dialog.show();
 
         //makes this activity full-screen (removes notification bar)
         requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -46,10 +65,7 @@ public class TestActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_test);
 
-        initListeners();
 
-        Intent intent = new Intent(activity, BleService.class);
-        bindService(intent, connection, Context.BIND_AUTO_CREATE);
 
     }
 
@@ -76,7 +92,7 @@ public class TestActivity extends AppCompatActivity {
             elapsedTime = endTime - startTime;
 
             // trim down to one decimal place.
-            double x = endTime / 1000.00;
+            double x = elapsedTime / 1000.00;
             x = x * Math.pow(10, 1);
             x = Math.floor(x);
             x = x / Math.pow(10, 1);
@@ -94,6 +110,8 @@ public class TestActivity extends AppCompatActivity {
 
         // save the measurements with the ble service.
         svc.setHRMeasurement(hrMeasurements);
+        // disable HR notifications
+        svc.notifyHR(BluetoothGattDescriptor.DISABLE_NOTIFICATION_VALUE);
 
     }
 
@@ -105,7 +123,6 @@ public class TestActivity extends AppCompatActivity {
         next.setOnClickListener(view -> {
             Intent intent = new Intent(TestActivity.this, Test2Activity.class);
             startActivity(intent);
-            //setContentView(R.layout.activity_test2);
         });
 
         retry.setOnClickListener(view -> {
@@ -121,6 +138,10 @@ public class TestActivity extends AppCompatActivity {
 
         series = new LineGraphSeries<>();
         heartGraph.addSeries(series);
+        GridLabelRenderer label = heartGraph.getGridLabelRenderer();
+        label.setHorizontalAxisTitle("Time (s)");
+        label.setVerticalAxisTitle("Heart Rate (bpm)");
+
 
         Viewport viewport = heartGraph.getViewport();
         viewport.setYAxisBoundsManual(false);

@@ -1,6 +1,7 @@
 package com.example.respiratorapp;
 import android.content.Context;
 import android.os.Build;
+import android.util.Log;
 
 import androidx.annotation.RequiresApi;
 
@@ -38,6 +39,8 @@ public class TestResults {
     private HR_RiskAssessment hrRisk;
     private RR_RiskAssessment rrRisk;
     private B02_RiskAssessment bo2Risk;
+
+    private String infoString;
 
     /** The data type representing the overall risk assessment */
     protected enum RiskAssessment {
@@ -115,49 +118,48 @@ public class TestResults {
         avgB02 = Integer.parseInt(info[3]);
 
         switch (info[4]) {
-            case "RiskAssessment.LOW":
+            case "LOW":
                 overallRisk = RiskAssessment.LOW;
                 break;
-            case "RiskAssessment.MODERATE":
+            case "MODERATE":
                 overallRisk = RiskAssessment.MODERATE;
                 break;
-            case "RiskAssessment.HIGH":
+            case "HIGH":
                 overallRisk = RiskAssessment.HIGH;
                 break;
         }
 
         switch (info[5]) {
-            case "HR_RiskAssessment.LOW":
+            case "LOW":
                 hrRisk = HR_RiskAssessment.LOW;
                 break;
-            case "HR_RiskAssessment.MODERATE":
+            case "MODERATE":
                 hrRisk = HR_RiskAssessment.MODERATE;
                 break;
-            case "HR_RiskAssessment.HIGH":
+            case "HIGH":
                 hrRisk = HR_RiskAssessment.HIGH;
                 break;
         }
 
         switch (info[6]) {
-            case "RR_RiskAssessment.LOW":
+            case "LOW":
                 rrRisk = RR_RiskAssessment.LOW;
                 break;
-            case "RR_RiskAssessment.MODERATE":
+            case "MODERATE":
                 rrRisk = RR_RiskAssessment.MODERATE;
                 break;
-            case "RR_RiskAssessment.HIGH":
+            case "HIGH":
                 rrRisk = RR_RiskAssessment.HIGH;
                 break;
         }
-
-        switch (info[7]) {
-            case "B02_RiskAssessment.LOW":
+        switch (info[7].trim()) {
+            case "LOW":
                 bo2Risk = B02_RiskAssessment.LOW;
                 break;
-            case "B02_RiskAssessment.MODERATE":
+            case "MODERATE":
                 bo2Risk = B02_RiskAssessment.MODERATE;
                 break;
-            case "B02_RiskAssessment.HIGH":
+            case "HIGH":
                 bo2Risk = B02_RiskAssessment.HIGH;
                 break;
         }

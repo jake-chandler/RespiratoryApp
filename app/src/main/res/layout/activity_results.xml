@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ResultsActivity">
+    tools:context=".PreviousResultsActivity">
 
     <ImageView
         android:id="@+id/background"
@@ -35,7 +35,7 @@
         android:layout_marginEnd="24dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/export_results" />
+        app:srcCompat="@drawable/submit_button" />
 
     <ImageView
         android:id="@+id/view_prev_res_dialog"
@@ -48,57 +48,68 @@
         app:srcCompat="@drawable/view_results" />
 
     <ImageView
-        android:id="@+id/prev_metric"
+        android:id="@+id/riskAssessment"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="412dp"
-        android:layout_marginEnd="37dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/previous_metrics" />
-
-    <ScrollView
-        android:layout_width="384dp"
-        android:layout_height="260dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="152dp"
-        android:orientation="vertical"
+        android:layout_marginStart="4dp"
+        android:layout_marginBottom="362dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:srcCompat="@drawable/assessment_box" />
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+    <ImageView
+        android:id="@+id/thisMeans"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginBottom="91dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/this_means" />
 
-            <com.jjoe64.graphview.GraphView
-                android:id="@+id/graph"
-                android:layout_width="379dp"
-                android:layout_height="200dip"
-                android:layout_marginStart="4dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"/>
+    <ImageView
+        android:id="@+id/selectTestResults"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginBottom="493dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/select_test_res" />
 
-            <com.jjoe64.graphview.GraphView
-                android:id="@+id/graph2"
-                android:layout_width="379dp"
-                android:layout_height="200dip"
-                android:layout_marginStart="4dp"
-                android:layout_marginTop="200dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+    <Spinner
+        android:id="@+id/previous_tests"
+        android:layout_width="371dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginBottom="500dp"
+        android:spinnerMode="dropdown"
+        android:textColor="@color/black"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
-            <com.jjoe64.graphview.GraphView
-                android:id="@+id/graph3"
-                android:layout_width="379dp"
-                android:layout_height="200dip"
-                android:layout_marginStart="4dp"
-                android:layout_marginTop="200dp"
-                android:layout_marginBottom="40dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"/>
-        </LinearLayout>
-    </ScrollView>
+    <TextView
+        android:id="@+id/ThisMeanstextView"
+        android:layout_width="359dp"
+        android:layout_height="176dp"
+        android:layout_marginStart="22dp"
+        android:layout_marginBottom="113dp"
+        android:text="TextView"
+        android:textColor="@color/black"
+        android:scrollbars="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/RiskAssessmenttextView"
+        android:layout_width="358dp"
+        android:layout_height="38dp"
+        android:layout_marginStart="23dp"
+        android:layout_marginBottom="374dp"
+        android:text="TextView"
+        android:textColor="@color/black"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

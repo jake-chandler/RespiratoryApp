@@ -3,9 +3,13 @@ package com.example.respiratorapp;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -18,6 +22,7 @@ import java.io.FileNotFoundException;
 public class LoginActivity extends AppCompatActivity {
     private EditText username;
     private EditText password;
+    private RespiratoryUser user;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,6 +33,7 @@ public class LoginActivity extends AppCompatActivity {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         setContentView(R.layout.activity_login);
+
 
         initListeners();
     }
@@ -44,18 +50,41 @@ public class LoginActivity extends AppCompatActivity {
                 String passwordValue = password.getText().toString();
                 try {
                     String RespiratoryUserString = RespiratoryUser.retrieveUser(getApplicationContext(), usernameValue);
-                    RespiratoryUser user = new RespiratoryUser( RespiratoryUserString );
+                    user = new RespiratoryUser( RespiratoryUserString );
                     if (passwordValue.equals(user.getPassword())) {
-                        Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
-                        startActivity(intent);
+                        Intent userServiceIntent = new Intent(LoginActivity.this, UserService.class);
+                        bindService(userServiceIntent, connection, Context.BIND_AUTO_CREATE);
                     }
                     else{
-                        Log.i("FORM", "wrong password");
+                        Log.i("LOGIN", "wrong password");
                     }
                 } catch (FileNotFoundException e) {
-                    Log.i("FORM", "user not found");
+                    Log.i("LOGIN", "user not found");
                 }
             }
         });
     }
+    private ServiceConnection connection = new ServiceConnection() {
+
+        @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            Log.i("LOGIN", "User Service discovered.");
+            UserService.UserServiceBinder binder = (UserService.UserServiceBinder) service;
+
+            // register this user to the User Service.
+            UserService userService = binder.getService();
+            userService.registerUser(user);
+
+            Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+            startActivity(intent);
+
+
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+
+        }
+    };
 }

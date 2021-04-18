@@ -51,8 +51,6 @@ public class PairingActivity extends Activity {
         setContentView(R.layout.activity_pairing);
 
         Intent intent = new Intent(this, BleService.class);
-
-
         bindService(intent, connection, Context.BIND_AUTO_CREATE);
 
 
