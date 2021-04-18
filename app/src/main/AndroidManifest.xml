@@ -15,9 +15,9 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
-        android:supportsRtl="true"
-        android:theme="@style/Theme.AppCompat.NoActionBar">
+        android:supportsRtl="true">
         <activity android:name=".RiskAssessmentActivity"></activity>
+        <activity android:name=".PreviousResultsActivity"></activity>
         <activity android:name=".LoginActivity" />
         <activity android:name=".UserActivity" />
         <activity android:name=".Test3Activity" />
@@ -25,7 +25,6 @@
         <activity android:name=".TestActivity" />
         <activity android:name=".ContributionActivity" />
         <activity android:name=".FormActivity" />
-        <activity android:name=".ResultsActivity" />
         <activity android:name=".SettingsActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>
@@ -42,6 +41,7 @@
             android:name=".PairedActivity"
             android:parentActivityName=".HomeActivity" />
         <service android:name=".BleService" />
+        <service android:name=".UserService"/>
     </application>
 
 

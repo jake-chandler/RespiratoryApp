@@ -16,15 +16,11 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
-/**
- * @brief Represents the settings screen of our application
- */
+
 public class SettingsActivity extends AppCompatActivity {
+    private Activity activity = this;
     private ImageView homeButton;
     private ImageView logoutButton;
-    private final Activity activity = this;
-    private UserService userService;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,7 +33,6 @@ public class SettingsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_settings);
 
         initListeners();
-
     }
 
     protected void initListeners() {
@@ -60,7 +55,6 @@ public class SettingsActivity extends AppCompatActivity {
             }
         });
     }
-
     private ServiceConnection connection = new ServiceConnection() {
 
         @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -70,8 +64,11 @@ public class SettingsActivity extends AppCompatActivity {
             UserService.UserServiceBinder binder = (UserService.UserServiceBinder) service;
 
             // de-register this user
-            userService = binder.getService();
-            userService.deregisterUser(userService.getActiveUser());
+            UserService userService = binder.getService();
+            userService.deregisterUser();
+
+            Intent intent = new Intent(SettingsActivity.this, UserActivity.class);
+            startActivity(intent);
 
         }
 

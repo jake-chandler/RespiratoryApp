@@ -4,34 +4,36 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.bluetooth.BluetoothGattDescriptor;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
-import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
 
 import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.GridLabelRenderer;
 import com.jjoe64.graphview.Viewport;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
 import java.sql.Timestamp;
 import java.util.Calendar;
-import java.util.List;
 
 /**
  * @brief Represents the heart rate test screen of our application
  */
 public class TestActivity extends AppCompatActivity {
 
+    private static final String LOGGER_INFO = "TestActivity";
     private static final int NUM_MEASUREMENTS = 100;
     private static final Timestamp SAMPLE_TIME = new Timestamp(10000);
     public static final long UPDATE_TIME = 100;
@@ -47,6 +49,22 @@ public class TestActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // Instantiate an AlertDialog.Builder with its constructor
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        // Chain together various setter methods to set the dialog characteristics
+        builder.setMessage("Please put on the Heart Rate Sensor");
+        builder.setNegativeButton("ok", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User cancelled the dialog
+                initListeners();
+
+                Intent intent = new Intent(activity, BleService.class);
+                bindService(intent, connection, Context.BIND_AUTO_CREATE);
+            }
+        });
+        // Create the AlertDialog
+        AlertDialog dialog = builder.create();
+        dialog.show();
 
         //makes this activity full-screen (removes notification bar)
         requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -55,7 +73,7 @@ public class TestActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_test);
 
-        initListeners();
+
 
     }
 
@@ -63,56 +81,83 @@ public class TestActivity extends AppCompatActivity {
     protected void collectMeasurements() throws InterruptedException {
 
         long startTime = Calendar.getInstance().getTimeInMillis();
-        List<DataPoint> hrMeasurements = null;
+        double[][] hrMeasurements = new double[1000][2];
+        int i = 0;
+        long elapsedTime, endTime;
         Timestamp timeElapsed;
-        long endTime;
+        Log.i("MEASUREMENT_THREAD", "Updating live graph...");
+        // take measurements for SAMPLE_TIME milliseconds or until we've achieved the NUM_MEASUREMENTS of measurements.
+        // theoretically, it should take SAMPLE_TIME milliseconds in order to reach NUM_MEASUREMENTS measurements.
         do {
-            // sleep every 100 ms to stay updated with the MC characteristic.
+            // this is to prevent slight update timing issues that may arise.
             Thread.sleep(UPDATE_TIME);
 
-            if (hrMeasurements.size() == NUM_MEASUREMENTS - 1) {
+            if (i == NUM_MEASUREMENTS - 1) {
                 break;
             }
+            // calculate elapsed time.
             endTime = Calendar.getInstance().getTimeInMillis();
-            double x = endTime;
+            elapsedTime = endTime - startTime;
+
+            // trim down to one decimal place.
+            double x = elapsedTime / 1000.00;
+            x = x * Math.pow(10, 1);
+            x = Math.floor(x);
+            x = x / Math.pow(10, 1);
+
+            //retrieve metric from ble service.
             double y = svc.getHrVal();
-            hrMeasurements.add(new DataPoint(x, y));
+
+            // populate the measurement data structure
+            hrMeasurements[i][0] = endTime;
+            hrMeasurements[i][1] = y;
             series.appendData(new DataPoint(x, y), true, NUM_MEASUREMENTS);
-            timeElapsed = new Timestamp((endTime - startTime));
+            timeElapsed = new Timestamp(elapsedTime);
+            i++;
         } while (timeElapsed.compareTo(SAMPLE_TIME) < 0);
-        if (hrMeasurements != null) {
-            svc.setHRMeasurement(hrMeasurements);
-        }
+
+        // save the measurements with the ble service.
+        svc.setHRMeasurement(hrMeasurements);
+        // disable HR notifications
+        svc.notifyHR(BluetoothGattDescriptor.DISABLE_NOTIFICATION_VALUE);
+
     }
 
     protected void initListeners() {
+        Log.i(LOGGER_INFO, "Initializing button listeners.");
         ImageView next = findViewById(R.id.next_btn);
         ImageView retry = findViewById(R.id.retry_btn);
 
         next.setOnClickListener(view -> {
             Intent intent = new Intent(TestActivity.this, Test2Activity.class);
             startActivity(intent);
-            //setContentView(R.layout.activity_test2);
         });
 
         retry.setOnClickListener(view -> {
             Intent intent = new Intent(TestActivity.this, TestActivity.class);
             startActivity(intent);
         });
+        Log.i(LOGGER_INFO, "Button Listeners successfully identified");
     }
+
     private void initGraph() {
+        Log.i(LOGGER_INFO, "Initializing graph.");
         GraphView heartGraph = findViewById(R.id.heartrate_graph);
-        Intent intent = new Intent(activity, BleService.class);
-        bindService(intent, connection, Context.BIND_AUTO_CREATE);
 
         series = new LineGraphSeries<>();
         heartGraph.addSeries(series);
+        GridLabelRenderer label = heartGraph.getGridLabelRenderer();
+        label.setHorizontalAxisTitle("Time (s)");
+        label.setVerticalAxisTitle("Heart Rate (bpm)");
+
 
         Viewport viewport = heartGraph.getViewport();
-        viewport.setYAxisBoundsManual(true);
-        viewport.setMinY(0);
-        viewport.setMaxY(200);
+        viewport.setYAxisBoundsManual(false);
+        viewport.setXAxisBoundsManual(true);
+
         viewport.setScalable(true);
+        viewport.setScrollable(true);
+        Log.i(LOGGER_INFO, "Graph initialized.");
     }
 
     private final ServiceConnection connection = new ServiceConnection() {
@@ -120,11 +165,12 @@ public class TestActivity extends AppCompatActivity {
         @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-            Log.i("PAIRED", "Ble Service discovered.");
+            Log.i(LOGGER_INFO, "Ble Service discovered.");
             BleService.BleServiceBinder binder = (BleService.BleServiceBinder) service;
             svc = binder.getService();
+            Log.i(LOGGER_INFO, "Notifying service...");
             svc.notifyHR(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
-            Log.i("PAIRED", "Notifying service...");
+
 
             // initialize graph.
             initGraph();
@@ -132,10 +178,11 @@ public class TestActivity extends AppCompatActivity {
             // update graph with data points in the background.
             new Thread(() -> {
                 try {
-                    Log.i("MEASUREMENT_THREAD", "Collecting measurements...");
+                    Log.i(LOGGER_INFO, "Collecting measurements.");
                     collectMeasurements();
+                    Log.i(LOGGER_INFO, "Measurements collected.");
                 } catch (InterruptedException e) {
-                    Log.e("MEASUREMENT_THREAD", e.toString());
+                    Log.e(LOGGER_INFO, "Error collecting measurements.");
                 }
             }).start();
 

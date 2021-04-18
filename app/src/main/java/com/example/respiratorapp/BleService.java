@@ -140,13 +140,13 @@ public class BleService extends Service {
     /**
      * Measurements to be stored.
      */
-    private List<DataPoint> rrMeasurements, b02Measurements, hrMeasurements;
+    private double[][] rrMeasurements, b02Measurements, hrMeasurements;
     /**
      * Setter for the list of heart rate measurements.
      * @param arr The list of heart rate measurements.
      * @note To be set by called in TestActivity
      */
-    public void setHRMeasurement(List<DataPoint> arr) {
+    public void setHRMeasurement(double[][] arr) {
         Log.i(LOGGER_INFO, "Storing heart rate measurements.");
         this.hrMeasurements = arr;
     }
@@ -155,7 +155,7 @@ public class BleService extends Service {
      * @param arr The list of blood oxygen measurements.
      * @note To be called in Test2Activity
      */
-    public void setB02Measurements(List<DataPoint> arr) {
+    public void setB02Measurements(double[][] arr) {
         Log.i(LOGGER_INFO, "Storing blood oxygen measurements.");
         this.b02Measurements = arr;
     }
@@ -164,7 +164,7 @@ public class BleService extends Service {
      * @param arr The list of respiratory measurements.
      * @note to be called in Test3Activity
      */
-    public void setRRMeasurements(List<DataPoint> arr) {
+    public void setRRMeasurements(double[][] arr) {
         Log.i(LOGGER_INFO, "Storing respiratory frequency measurements.");
         this.rrMeasurements = arr;
     }
@@ -173,7 +173,7 @@ public class BleService extends Service {
      * @return The list of heart rate measurements.
      * @note To be called by RiskAssessmentActivity.
      */
-    List<DataPoint> getHRMeasurement() {
+    double[][] getHRMeasurement() {
         return this.hrMeasurements;
     }
     /**
@@ -181,7 +181,7 @@ public class BleService extends Service {
      * @return The list of blood oxygen measurements.
      * @note To be called by RiskAssessmentActivity.
      */
-    List<DataPoint> getB02Measurement() {
+    double[][] getB02Measurement() {
         return this.b02Measurements;
     }
     /**
@@ -189,7 +189,7 @@ public class BleService extends Service {
      * @return The list of respiratory measurements.
      * @note To be called by RiskAssessmentActivity.
      */
-    List<DataPoint> getRRMeasurement() {
+    double[][]getRRMeasurement() {
         return this.rrMeasurements;
     }
 
@@ -384,6 +384,7 @@ public class BleService extends Service {
      * Helper method used to obtain the BluetoothGattDescriptor for for HR, RR, and B02 characteristics from the offered services
      *
      * @param services The services offered by the UGA sensor device.
+     * TODO: This is poorly implemented.
      */
     private void findServices(List<BluetoothGattService> services) {
         for (BluetoothGattService service : services) {

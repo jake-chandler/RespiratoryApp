@@ -1,8 +1,11 @@
 package com.example.respiratorapp;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.bluetooth.BluetoothGattDescriptor;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Build;
@@ -17,13 +20,13 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.GridLabelRenderer;
 import com.jjoe64.graphview.Viewport;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
 import java.sql.Timestamp;
 import java.util.Calendar;
-import java.util.List;
 
 /**
  * @brief Represents the BO2 test screen of our application
@@ -33,6 +36,7 @@ public class Test2Activity extends AppCompatActivity {
     private static final int NUM_MEASUREMENTS = 100;
     private static final Timestamp SAMPLE_TIME = new Timestamp(10000);
     private static final int UPDATE_TIME = 100;
+    private static final String LOGGER_INFO = "Test2Activity";
     BleService svc;
     Activity activity = this;
     private LineGraphSeries<DataPoint> series;
@@ -43,9 +47,25 @@ public class Test2Activity extends AppCompatActivity {
     private ImageView retry;
 
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // Instantiate an AlertDialog.Builder with its constructor
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        // Chain together various setter methods to set the dialog characteristics
+        builder.setMessage("Please put on the Microphone Sensor");
+        builder.setNegativeButton("ok", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User cancelled the dialog
+                initListeners();
+                Intent intent = new Intent(activity, BleService.class);
+                bindService(intent, connection, Context.BIND_AUTO_CREATE);
+            }
+        });
+        // Create the AlertDialog
+        AlertDialog dialog = builder.create();
+        dialog.show();
 
         //makes this activity full-screen (removes notification bar)
         requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -54,38 +74,53 @@ public class Test2Activity extends AppCompatActivity {
 
         setContentView(R.layout.activity_test2);
 
-        initListeners();
-
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     protected void collectMeasurements() throws InterruptedException {
+
         long startTime = Calendar.getInstance().getTimeInMillis();
-        List<DataPoint> b02Measurements = null;
+        double[][] b02Measurements = new double[1000][2];
+        int i = 0;
+        long elapsedTime, endTime;
         Timestamp timeElapsed;
-        long endTime;
         Log.i("MEASUREMENT_THREAD", "Updating live graph...");
+        // take measurements for SAMPLE_TIME milliseconds or until we've achieved the NUM_MEASUREMENTS of measurements.
+        // theoretically, it should take SAMPLE_TIME milliseconds in order to reach NUM_MEASUREMENTS measurements.
         do {
-            if (b02Measurements.size() == NUM_MEASUREMENTS) { break; }
-            // sleep this thread UPDATE_TIME milliseconds. to ensure retrieval of latest measurement from the sensor device.
+            // this is to prevent slight update timing issues that may arise.
             Thread.sleep(UPDATE_TIME);
+
+            // calculate elapsed time.
             endTime = Calendar.getInstance().getTimeInMillis();
+            elapsedTime = endTime - startTime;
 
-            // get the metric from the Ble Service
-            double time = endTime;
-            double b02 =    svc.getHrVal();;
+            // trim time value down to one decimal place.
+            double x = elapsedTime / 1000.00;
+            x = x * Math.pow(10, 1);
+            x = Math.floor(x);
+            x = x / Math.pow(10, 1);
 
-            // plot metric to graph.
-            series.appendData( new DataPoint( time, b02),true,NUM_MEASUREMENTS );
-            b02Measurements.add(new DataPoint(time, b02));
-            timeElapsed = new Timestamp((endTime - startTime));
+            //retrieve metric from ble service.
+            double y = svc.getRrVal();
+            Log.i(LOGGER_INFO, "Resp Val: " + y);
+
+            // populate the measurement data structure
+            b02Measurements[i][0] = endTime;
+            b02Measurements[i][1] = y;
+            series.appendData(new DataPoint(x, y), true, NUM_MEASUREMENTS);
+            timeElapsed = new Timestamp(elapsedTime);
+            i++;
         } while (timeElapsed.compareTo(SAMPLE_TIME) < 0);
-        // save measurements with the BLE service.
-        if (b02Measurements != null) {
-            svc.setB02Measurements(b02Measurements);
-        }
+
+        // save the measurements with the ble service.
+        svc.setRRMeasurements(b02Measurements);
+        // disable HR notifications
+        svc.notifyRR(BluetoothGattDescriptor.DISABLE_NOTIFICATION_VALUE);
+
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     protected void initListeners() {
         ImageView next = findViewById(R.id.next_btn);
         ImageView retry = findViewById(R.id.retry_btn);
@@ -100,21 +135,27 @@ public class Test2Activity extends AppCompatActivity {
     }
 
     private void initGraph() {
-        GraphView BO2Graph = findViewById(R.id.heartrate_graph);
-        Intent intent = new Intent(activity, BleService.class);
-        bindService(intent, connection, Context.BIND_AUTO_CREATE);
+        GraphView BO2Graph = findViewById(R.id.oxygen_graph);
+
 
         series = new LineGraphSeries<>();
         BO2Graph.addSeries(series);
 
+        GridLabelRenderer label = BO2Graph.getGridLabelRenderer();
+        label.setHorizontalAxisTitle("Time (s)");
+        label.setVerticalAxisTitle("Frequency (hz)");
+
         Viewport viewport = BO2Graph.getViewport();
+
         viewport.setYAxisBoundsManual(true);
+        viewport.setXAxisBoundsManual(true);
+
+        viewport.setMaxY(600);
         viewport.setMinY(0);
-        viewport.setMaxY(100);
+        viewport.setScalable(true);
         viewport.setScrollable(true);
-
+        Log.i(LOGGER_INFO, "Graph initialized.");
     }
-
 
 
     private final ServiceConnection connection = new ServiceConnection() {
@@ -122,8 +163,11 @@ public class Test2Activity extends AppCompatActivity {
         @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-            Log.i("PAIRED", "Ble Service discovered.");
-            // initialize graph.
+            Log.i(LOGGER_INFO, "Ble Service discovered.");
+            BleService.BleServiceBinder binder = (BleService.BleServiceBinder) service;
+            svc = binder.getService();
+            Log.i(LOGGER_INFO, "Notifying service...");
+            svc.notifyRR(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
             initGraph();
 
             // update graph with data points in the background.

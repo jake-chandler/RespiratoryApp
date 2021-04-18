@@ -13,6 +13,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -90,6 +91,7 @@ public class RespiratoryUser {
         this.age = age;
         this.height = height;
         this.weight = weight;
+        this.testResultsList = new LinkedList<>();
     }
 
     /**
@@ -109,6 +111,7 @@ public class RespiratoryUser {
         age = Integer.parseInt(info[5]);
         height = Integer.parseInt(info[6]);
         weight = Integer.parseInt(info[7]);
+        testResultsList = new LinkedList<>();
 
         switch (info[3]) {
             case "MALE":

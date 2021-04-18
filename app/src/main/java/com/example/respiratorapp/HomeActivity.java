@@ -3,6 +3,7 @@ package com.example.respiratorapp;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -74,7 +75,8 @@ public class HomeActivity extends Activity {
         prevTestButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(HomeActivity.this, ResultsActivity.class);
+                Log.i("HOME", "BUTTON CLICKED");
+                Intent intent = new Intent(HomeActivity.this, PreviousResultsActivity.class);
                 startActivity(intent);
             }
         });

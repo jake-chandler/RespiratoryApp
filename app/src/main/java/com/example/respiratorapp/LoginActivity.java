@@ -3,7 +3,6 @@ package com.example.respiratorapp;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -20,17 +19,10 @@ import android.widget.ImageView;
 
 import java.io.FileNotFoundException;
 
-/**
- * @brief Represents the login screen of our application
- */
 public class LoginActivity extends AppCompatActivity {
-
-    private RespiratoryUser user;
-
     private EditText username;
-    private final Activity activity = this;
     private EditText password;
-
+    private RespiratoryUser user;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,28 +34,9 @@ public class LoginActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_login);
 
+
         initListeners();
     }
-    @Override
-    public void onStart(){
-        super.onStart();
-        checkSession();
-    }
-
-    private void checkSession(){
-        SessionManagement sessionManagement = new SessionManagement((getApplicationContext()));
-        String userID = sessionManagement.getSession();
-
-        if(userID != "-1"){
-            Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
-        }
-        else{
-            //do nothing
-        }
-    }
-
 
     private void initListeners() {
         ImageView submitButton;
@@ -78,35 +51,35 @@ public class LoginActivity extends AppCompatActivity {
                 try {
                     String RespiratoryUserString = RespiratoryUser.retrieveUser(getApplicationContext(), usernameValue);
                     user = new RespiratoryUser( RespiratoryUserString );
-
-
                     if (passwordValue.equals(user.getPassword())) {
-                        // save this user as this the user for this session
-                        Intent userServiceIntent = new Intent(activity, UserService.class);
-                        bindService(userServiceIntent, userServiceConnection, Context.BIND_AUTO_CREATE);
-                        // continue to home page.
-                        Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(intent);
+                        Intent userServiceIntent = new Intent(LoginActivity.this, UserService.class);
+                        bindService(userServiceIntent, connection, Context.BIND_AUTO_CREATE);
                     }
                     else{
-                        Log.i("FORM", "wrong password");
+                        Log.i("LOGIN", "wrong password");
                     }
                 } catch (FileNotFoundException e) {
-                    Log.i("FORM", "user not found");
+                    Log.i("LOGIN", "user not found");
                 }
             }
         });
     }
+    private ServiceConnection connection = new ServiceConnection() {
 
-    private ServiceConnection userServiceConnection = new ServiceConnection() {
+        @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
+            Log.i("LOGIN", "User Service discovered.");
             UserService.UserServiceBinder binder = (UserService.UserServiceBinder) service;
 
-            // save this session's user.
+            // register this user to the User Service.
             UserService userService = binder.getService();
             userService.registerUser(user);
+
+            Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+            startActivity(intent);
+
+
         }
 
         @Override
