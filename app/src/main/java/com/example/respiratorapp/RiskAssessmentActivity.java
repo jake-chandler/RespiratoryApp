@@ -169,6 +169,7 @@ public class RiskAssessmentActivity extends AppCompatActivity {
 
             double heartRate = hrMeas[i][1];
             sum+=heartRate;
+            // classify heart rate threshold based on age.
             if (user.getAge() > 40) {
                 if (user.getAge() > 60) {
                     if (user.getAge() > 80) {
@@ -186,6 +187,7 @@ public class RiskAssessmentActivity extends AppCompatActivity {
                 upperThreshold = 100;
                 lowerThreshold = 60;
             }
+            // determine risk
             if (lowerThreshold < heartRate && heartRate < upperThreshold) {
                 // normal
                 hrRisk = TestResults.HR_RiskAssessment.HIGH;
@@ -194,6 +196,7 @@ public class RiskAssessmentActivity extends AppCompatActivity {
                 hrRisk = TestResults.HR_RiskAssessment.LOW;
             }
         }
+        // compute average.
         hrAvg = (int) (sum / NUM_MEASUREMENTS);
         info += "Your heart rate is between " + lowerThreshold +" and "+ upperThreshold + ". This is "+ hrRisk.toString() + " risk for your age.\n\n";
         if (hrRisk == TestResults.HR_RiskAssessment.HIGH) {
@@ -205,14 +208,25 @@ public class RiskAssessmentActivity extends AppCompatActivity {
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private void calculateRrRisk() {
         double sum = 0;
+        int consecutiveZeros = 0;
+        boolean continuous = true;
         for (int i = 0; i < NUM_MEASUREMENTS; i++) {
             double resp = rrMeas[i][1];
             sum+=resp;
-            if (resp >=0 && resp <= 700) {
+            if (resp <=0){
+                consecutiveZeros++;
+            }
+            else if (resp >=0 && resp <= 700) {
                 rrRisk = TestResults.RR_RiskAssessment.LOW;
             }
             else {
                 rrRisk = TestResults.RR_RiskAssessment.HIGH;
+            }
+
+            // classify as continuous or discontinuous
+            if (consecutiveZeros == 10) {
+                continuous = false;
+                consecutiveZeros = 0;
             }
         }
         if (rrRisk == TestResults.RR_RiskAssessment.LOW) {
