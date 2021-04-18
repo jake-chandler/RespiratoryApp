@@ -1,7 +1,7 @@
 # Respiratory Risk Assessment Kit - Partner Application
 
 Welcome to the Respiratory Risk Assessment kit partner application for Android devices. This application pairs with the UGA Heart Rate, Respiratory Rate, and Blood Oxygen
-Bluetooth Low Energy Sensor, and it's general aim is to anaylze the measurements the sensor collects to evaluate an indiviuals risk for certain respiratory conditions,
+Bluetooth Low Energy Sensor, and its general aim is to anaylze the measurements the sensor collects to evaluate an indiviuals risk for certain respiratory conditions,
 such as COPD, Bronchitis, COVID-19 etc.
 
 The application supports the following features: <br/>
