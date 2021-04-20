@@ -46,7 +46,10 @@ public class Test2Activity extends AppCompatActivity {
     private ImageView next;
     private ImageView retry;
 
-
+    /**
+     * Creates the stage for the screen.
+     * Dialog is a pop up to put on the sensor.
+     */
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,6 +79,9 @@ public class Test2Activity extends AppCompatActivity {
 
     }
 
+    /**
+     * Communication with tbe microcontroller to acquire data.
+     */
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     protected void collectMeasurements() throws InterruptedException {
 
@@ -120,6 +126,9 @@ public class Test2Activity extends AppCompatActivity {
 
     }
 
+    /**
+     * Initializes the button functions.
+     */
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     protected void initListeners() {
         ImageView next = findViewById(R.id.next_btn);
@@ -134,6 +143,10 @@ public class Test2Activity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Initializes the graph view to certain constraints.
+     * Generates values based on microcontroller data.
+     */
     private void initGraph() {
         GraphView BO2Graph = findViewById(R.id.oxygen_graph);
 
@@ -158,6 +171,9 @@ public class Test2Activity extends AppCompatActivity {
     }
 
 
+    /**
+     * Allows the connection to pair with the specific sensor component.
+     */
     private final ServiceConnection connection = new ServiceConnection() {
 
         @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
