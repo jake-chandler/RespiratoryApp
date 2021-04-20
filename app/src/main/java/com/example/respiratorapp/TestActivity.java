@@ -46,6 +46,10 @@ public class TestActivity extends AppCompatActivity {
     private ImageView next;
     private ImageView retry;
 
+    /**
+     * Creates the stage for the screen.
+     * Dialog is a pop up to put on the sensor.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,6 +81,9 @@ public class TestActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Communication with tbe microcontroller to acquire data.
+     */
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     protected void collectMeasurements() throws InterruptedException {
 
@@ -123,6 +130,9 @@ public class TestActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Initializes the button functions.
+     */
     protected void initListeners() {
         Log.i(LOGGER_INFO, "Initializing button listeners.");
         ImageView next = findViewById(R.id.next_btn);
@@ -140,6 +150,11 @@ public class TestActivity extends AppCompatActivity {
         Log.i(LOGGER_INFO, "Button Listeners successfully identified");
     }
 
+
+    /**
+     * Initializes the graph view to certain constraints.
+     * Generates values based on microcontroller data.
+     */
     private void initGraph() {
         Log.i(LOGGER_INFO, "Initializing graph.");
         GraphView heartGraph = findViewById(R.id.heartrate_graph);
@@ -160,6 +175,9 @@ public class TestActivity extends AppCompatActivity {
         Log.i(LOGGER_INFO, "Graph initialized.");
     }
 
+    /**
+     * Allows the connection to pair with the specific sensor component.
+     */
     private final ServiceConnection connection = new ServiceConnection() {
 
         @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
