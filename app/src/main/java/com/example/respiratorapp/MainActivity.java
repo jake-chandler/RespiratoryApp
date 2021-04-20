@@ -13,7 +13,6 @@ import android.view.WindowManager;
  * This class represents the load-up screen for this application.
  * This screen should display for 3 seconds, and then transition to the home screen.
  *
- * @Author Jake Chandler
  */
 public class MainActivity extends AppCompatActivity {
     @Override

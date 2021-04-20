@@ -17,6 +17,9 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
 
+/**
+ * The settings page.
+ */
 public class SettingsActivity extends AppCompatActivity {
     private Activity activity = this;
     private ImageView homeButton;

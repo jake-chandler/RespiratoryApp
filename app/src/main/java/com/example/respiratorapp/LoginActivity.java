@@ -19,6 +19,9 @@ import android.widget.ImageView;
 
 import java.io.FileNotFoundException;
 
+/**
+ * The returning user login screen.
+ */
 public class LoginActivity extends AppCompatActivity {
     private EditText username;
     private EditText password;

@@ -29,6 +29,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import java.io.FileNotFoundException;
 
+/**
+ * Retrieves and displays results from previous tests.
+ */
 public class PreviousResultsActivity extends AppCompatActivity {
     private Spinner previousTests;
     private ImageView slider1, slider2, slider3, slider4, slider5, slider6, slider7, slider8, slider9, home, submit;
@@ -67,6 +70,9 @@ public class PreviousResultsActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Helper function to initialize onClick listeners for elements on the layout.
+     */
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     private void initListeners() {
         previousTests = (Spinner) findViewById(R.id.spinner);
@@ -100,6 +106,7 @@ public class PreviousResultsActivity extends AppCompatActivity {
             try {
                 Log.i("PREVIOUS", previousTests.getSelectedItem().toString());
                 Log.i("PREVIOUS", TestResults.retrieveTestResults(getApplicationContext(), previousTests.getSelectedItem().toString()));
+                // retrieve the desired test result.
                 testResults = new TestResults(TestResults.retrieveTestResults(getApplicationContext(), previousTests.getSelectedItem().toString()));
                 Log.i("PREVIOUS", testResults.toString());
 
@@ -114,6 +121,9 @@ public class PreviousResultsActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Updates the risk assessment slider from selected previous test.
+     */
     private void buildInfo() {
         if (testResults.getHrRisk() == TestResults.HR_RiskAssessment.HIGH) {
             Log.i("PREVIOUS", "HIGH");
