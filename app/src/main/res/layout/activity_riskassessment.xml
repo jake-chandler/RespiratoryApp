@@ -7,6 +7,34 @@
     tools:context=".RiskAssessmentActivity">
 
     <ImageView
+        android:id="@+id/imageView14"
+        android:layout_width="19dp"
+        android:layout_height="70dp"
+        android:layout_marginStart="64dp"
+        android:layout_marginTop="502dp"
+        android:layout_marginEnd="310dp"
+        android:layout_marginBottom="213dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/risk_slider" />
+
+    <ImageView
+        android:id="@+id/imageView9"
+        android:layout_width="19dp"
+        android:layout_height="70dp"
+        android:layout_marginStart="64dp"
+        android:layout_marginTop="264dp"
+        android:layout_marginEnd="310dp"
+        android:layout_marginBottom="451dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/risk_slider" />
+
+    <ImageView
         android:id="@+id/background"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -20,79 +48,207 @@
         android:id="@+id/view_res_dialog"
         android:layout_width="264dp"
         android:layout_height="181dp"
-        android:layout_marginStart="72dp"
-        android:layout_marginBottom="544dp"
+        android:layout_marginStart="64dp"
+        android:layout_marginBottom="552dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:srcCompat="@drawable/view_results_emblem" />
 
     <ImageView
-        android:id="@+id/risk_asses"
-        android:layout_width="378dp"
-        android:layout_height="125dp"
-        android:layout_marginEnd="20dp"
-        android:layout_marginBottom="420dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@drawable/assessment_box" />
-
-    <ImageView
-        android:id="@+id/means_box"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="4dp"
-        android:layout_marginBottom="152dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@drawable/this_means" />
-
-    <ImageView
         android:id="@+id/export_res"
-        android:layout_width="204dp"
-        android:layout_height="77dp"
-        android:layout_marginStart="100dp"
-        android:layout_marginBottom="84dp"
+        android:layout_width="221dp"
+        android:layout_height="94dp"
+        android:layout_marginStart="148dp"
+        android:layout_marginTop="667dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="24dp"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@drawable/export_results" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/export" />
 
     <ImageView
         android:id="@+id/home"
         android:layout_width="99dp"
         android:layout_height="90dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginTop="667dp"
+        android:layout_marginBottom="28dp"
         android:src="@drawable/home_button"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <TextView
-        android:id="@+id/textViewRiskAssessment"
-        android:layout_width="333dp"
-        android:layout_height="28dp"
-        android:layout_marginStart="36dp"
-        android:layout_marginBottom="436dp"
-        android:textColor="@color/black"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <TextView
-        android:id="@+id/textViewThisMeans"
-        android:layout_width="370dp"
-        android:layout_height="179dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginBottom="168dp"
-        android:textColor="@color/black"
-        android:scrollbars="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintHorizontal_bias="0.122"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/imageView2"
-        android:layout_width="361dp"
-        android:layout_height="54dp"
-        app:srcCompat="@drawable/risk_gradient"
-        tools:layout_editor_absoluteX="-25dp"
-        tools:layout_editor_absoluteY="255dp" />
+        android:layout_width="312dp"
+        android:layout_height="433dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="176dp"
+        android:layout_marginEnd="41dp"
+        android:layout_marginBottom="176dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/group_13" />
+
+    <ImageView
+        android:id="@+id/imageView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="600dp"
+        android:layout_marginBottom="118dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/group_14" />
+
+    <ImageView
+        android:id="@+id/slider3"
+        android:layout_width="19dp"
+        android:layout_height="70dp"
+        android:layout_marginTop="241dp"
+        android:layout_marginEnd="65dp"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/risk_slider" />
+
+    <ImageView
+        android:id="@+id/slider2"
+        android:layout_width="19dp"
+        android:layout_height="70dp"
+        android:layout_marginStart="177dp"
+        android:layout_marginTop="264dp"
+        android:layout_marginEnd="197dp"
+        android:layout_marginBottom="451dp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0"
+        app:srcCompat="@drawable/risk_slider" />
+
+    <ImageView
+        android:id="@+id/slider1"
+        android:layout_width="19dp"
+        android:layout_height="70dp"
+        android:layout_marginTop="241dp"
+        android:layout_marginEnd="310dp"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/risk_slider" />
+
+    <ImageView
+        android:id="@+id/slider4"
+        android:layout_width="19dp"
+        android:layout_height="70dp"
+        android:layout_marginStart="64dp"
+        android:layout_marginTop="385dp"
+        android:layout_marginEnd="310dp"
+        android:layout_marginBottom="330dp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/risk_slider" />
+
+    <ImageView
+        android:id="@+id/slider5"
+        android:layout_width="19dp"
+        android:layout_height="70dp"
+        android:layout_marginStart="177dp"
+        android:layout_marginTop="385dp"
+        android:layout_marginEnd="197dp"
+        android:layout_marginBottom="330dp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/risk_slider" />
+
+    <ImageView
+        android:id="@+id/slider8"
+        android:layout_width="19dp"
+        android:layout_height="70dp"
+        android:layout_marginStart="177dp"
+        android:layout_marginTop="502dp"
+        android:layout_marginEnd="197dp"
+        android:layout_marginBottom="213dp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/risk_slider" />
+
+    <ImageView
+        android:id="@+id/slider9"
+        android:layout_width="19dp"
+        android:layout_height="70dp"
+        android:layout_marginStart="292dp"
+        android:layout_marginTop="502dp"
+        android:layout_marginEnd="82dp"
+        android:layout_marginBottom="213dp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/risk_slider" />
+
+    <ImageView
+        android:id="@+id/slider7"
+        android:layout_width="19dp"
+        android:layout_height="70dp"
+        android:layout_marginStart="64dp"
+        android:layout_marginTop="502dp"
+        android:layout_marginEnd="310dp"
+        android:layout_marginBottom="213dp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/risk_slider" />
+
+    <ImageView
+        android:id="@+id/slider6"
+        android:layout_width="19dp"
+        android:layout_height="70dp"
+        android:layout_marginStart="292dp"
+        android:layout_marginTop="385dp"
+        android:layout_marginEnd="82dp"
+        android:layout_marginBottom="330dp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/risk_slider" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="171dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="198dp"
+        android:layout_marginTop="604dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="141dp"
+        android:text="TextView"
+        android:textColor="@color/black"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

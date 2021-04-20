@@ -1,6 +1,5 @@
 package com.example.respiratorapp;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -8,16 +7,9 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
 
-/**
- * @brief Represents the contribution screen of our application
- */
-public class ContributionActivity extends Activity {
+import androidx.appcompat.app.AppCompatActivity;
 
-    /**
-     * Buttons
-     */
-    private ImageView homeButton;
-
+public class AboutActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,20 +19,16 @@ public class ContributionActivity extends Activity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-        setContentView(R.layout.activity_contribution);
+        setContentView(R.layout.activity_about);
 
-        initListeners();
-    }
-
-    protected void initListeners() {
-        homeButton = (ImageView) findViewById(R.id.home);
-        homeButton.setOnClickListener(new View.OnClickListener() {
+        ImageView home = (ImageView) findViewById(R.id.home);
+        home.setOnClickListener(new View.OnClickListener() {
             @Override
-            //allows the user to move bac to the home screen
-            public void onClick(View view) {
-                Intent intent = new Intent(ContributionActivity.this, HomeActivity.class);
+            public void onClick(View v) {
+                Intent intent = new Intent(AboutActivity.this, HomeActivity.class);
                 startActivity(intent);
             }
         });
+
     }
 }

@@ -125,6 +125,7 @@ public class Test3Activity extends AppCompatActivity {
         ImageView next = findViewById(R.id.next_btn);
         ImageView retry = findViewById(R.id.retry_btn);
         next.setOnClickListener(view -> {
+            Log.i(LOGGER_INFO, "REACHED");
             Intent intent = new Intent(Test3Activity.this, RiskAssessmentActivity.class);
             startActivity(intent);
         });

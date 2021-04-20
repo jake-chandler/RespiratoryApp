@@ -5,11 +5,15 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.graphics.Typeface;
 import android.media.Image;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.text.SpannableString;
+import android.text.Spanned;
 import android.text.method.ScrollingMovementMethod;
+import android.text.style.StyleSpan;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -27,12 +31,10 @@ import java.io.FileNotFoundException;
 
 public class PreviousResultsActivity extends AppCompatActivity {
     private Spinner previousTests;
-    String information = "";
-    String riskText = "";
+    private ImageView slider1, slider2, slider3, slider4, slider5, slider6, slider7, slider8, slider9, home, submit;
     TestResults testResults;
-    private ImageView submitButton, homeButton;
-    private TextView risk, means;
-    private Activity activity = this;
+    private TextView means;
+    private final Activity activity = this;
     private RespiratoryUser user;
 
     @Override
@@ -46,23 +48,30 @@ public class PreviousResultsActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_results);
 
+        submit = (ImageView) findViewById(R.id.export_res);
+        home = (ImageView) findViewById(R.id.home);
+        slider1 = (ImageView) findViewById(R.id.slider1);
+        slider2 = (ImageView) findViewById(R.id.slider2);
+        slider3 = (ImageView) findViewById(R.id.slider3);
+        slider4 = (ImageView) findViewById(R.id.slider4);
+        slider5 = (ImageView) findViewById(R.id.slider5);
+        slider6 = (ImageView) findViewById(R.id.slider6);
+        slider7 = (ImageView) findViewById(R.id.slider7);
+        slider8 = (ImageView) findViewById(R.id.slider8);
+        slider9 = (ImageView) findViewById(R.id.slider9);
+        means = (TextView) findViewById(R.id.textView);
 
         Intent userServiceIntent = new Intent(activity, UserService.class);
         bindService(userServiceIntent, userServiceConnection, Context.BIND_AUTO_CREATE);
 
 
-
-
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     private void initListeners() {
-        previousTests = (Spinner) findViewById(R.id.previous_tests);
-        submitButton = (ImageView) findViewById(R.id.export_res);
-        homeButton = (ImageView) findViewById(R.id.home);
-        risk = (TextView) findViewById(R.id.RiskAssessmenttextView);
-        means = (TextView) findViewById(R.id.ThisMeanstextView);
+        previousTests = (Spinner) findViewById(R.id.spinner);
+        means = (TextView) findViewById(R.id.textView);
         means.setMovementMethod(new ScrollingMovementMethod());
-        risk.setText("");
         means.setText("");
 
         String[] info = new String[user.getTestResultsList().size()];
@@ -73,65 +82,75 @@ public class PreviousResultsActivity extends AppCompatActivity {
         }
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, info);
         previousTests.setAdapter(adapter);
-        homeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(PreviousResultsActivity.this,HomeActivity.class);
-                startActivity(intent);
-            }
+        home.setOnClickListener(v -> {
+            Intent intent = new Intent(PreviousResultsActivity.this, HomeActivity.class);
+            startActivity(intent);
         });
-        submitButton.setOnClickListener(new View.OnClickListener() {
-            @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-            @Override
-            public void onClick(View v) {
-                try {
-                    Log.i("PREVIOUS", previousTests.getSelectedItem().toString());
-                    Log.i("PREVIOUS", TestResults.retrieveTestResults(getApplicationContext(), previousTests.getSelectedItem().toString()));
-                    testResults = new TestResults(TestResults.retrieveTestResults(getApplicationContext(), previousTests.getSelectedItem().toString()));
-                    Log.i("PREVIOUS", testResults.toString());
+        submit.setOnClickListener(v -> {
+            slider1.setVisibility(View.INVISIBLE);
+            slider2.setVisibility(View.INVISIBLE);
+            slider3.setVisibility(View.INVISIBLE);
+            slider4.setVisibility(View.INVISIBLE);
+            slider5.setVisibility(View.INVISIBLE);
+            slider6.setVisibility(View.INVISIBLE);
+            slider7.setVisibility(View.INVISIBLE);
+            slider8.setVisibility(View.INVISIBLE);
+            slider9.setVisibility(View.INVISIBLE);
+            means.setText("");
+            try {
+                Log.i("PREVIOUS", previousTests.getSelectedItem().toString());
+                Log.i("PREVIOUS", TestResults.retrieveTestResults(getApplicationContext(), previousTests.getSelectedItem().toString()));
+                testResults = new TestResults(TestResults.retrieveTestResults(getApplicationContext(), previousTests.getSelectedItem().toString()));
+                Log.i("PREVIOUS", testResults.toString());
 
-                    new Thread(() -> {
-                        buildInfo();
-                        means.setText(information);
-                        risk.setText(riskText);
-                    }).start();
+                buildInfo();
 
-                } catch (FileNotFoundException e) {
-                    Log.e("PREVIOUS", "Test result file not found.");
-                }
-
+            } catch (FileNotFoundException e) {
+                Log.e("PREVIOUS", "Test result file not found.");
             }
-        });
 
+        });
 
 
     }
 
     private void buildInfo() {
-        if (testResults.getHrRisk()== TestResults.HR_RiskAssessment.HIGH){
+        if (testResults.getHrRisk() == TestResults.HR_RiskAssessment.HIGH) {
             Log.i("PREVIOUS", "HIGH");
-            information += "Your heart rate is not in the normal range for your age." + ". This is HIGH risk for your age.\n\n";
-            information += "Please consult a physician. \n\n";
-            riskText = "HIGH";
+            slider3.setVisibility(View.VISIBLE);
+
+        } else {
+            slider1.setVisibility(View.VISIBLE);
         }
         if (testResults.getBo2Risk() == TestResults.B02_RiskAssessment.HIGH) {
             Log.i("PREVIOUS", "HIGH");
-            information += "Your breathing frequencies are not in the normal range." + ". This is HIGH risk for your age.\n\n";
-            information += "Please consult a physician. \n\n";
-            riskText = "HIGH";
+            slider6.setVisibility(View.VISIBLE);
+
+        } else {
+            slider4.setVisibility(View.VISIBLE);
         }
         if (testResults.getRrRisk() == TestResults.RR_RiskAssessment.HIGH) {
             Log.i("PREVIOUS", "HIGH");
-            information += "Your blood oxygen concentration is not in the normal range." + ". This is HIGH risk for your age.\n\n";
-            information += "Please consult a physician. \n\n";
-            riskText = "HIGH";
+            slider9.setVisibility(View.VISIBLE);
+        } else {
+            slider7.setVisibility(View.VISIBLE);
         }
-        if (risk.equals("")) {
-            riskText = "LOW";
+
+        SpannableString s;
+        if (testResults.getHrRisk() == TestResults.HR_RiskAssessment.HIGH ||
+                testResults.getRrRisk() == TestResults.RR_RiskAssessment.HIGH ||
+                testResults.getBo2Risk() == TestResults.B02_RiskAssessment.HIGH) {
+            s = new SpannableString("Please Consult a Physician.");
+        } else {
+            s = new SpannableString("You're all good!");
         }
+        StyleSpan span = new StyleSpan(Typeface.BOLD);
+        s.setSpan(span, 0, s.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        means.setText(s);
     }
 
     private ServiceConnection userServiceConnection = new ServiceConnection() {
+        @RequiresApi(api = Build.VERSION_CODES.KITKAT)
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             UserService.UserServiceBinder binder = (UserService.UserServiceBinder) service;

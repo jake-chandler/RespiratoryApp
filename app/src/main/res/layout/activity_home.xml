@@ -13,15 +13,15 @@
 
         android:scaleType="fitXY"
         android:src="@drawable/pixel_3_screen"
-        tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="0dp" />
+        tools:layout_editor_absoluteX="13dp"
+        tools:layout_editor_absoluteY="40dp" />
 
     <ImageView
         android:id="@+id/lung"
         android:layout_width="402dp"
         android:layout_height="333dp"
-        android:layout_marginStart="5dp"
-        android:layout_marginTop="368dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="396dp"
         android:src="@drawable/lung"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -31,7 +31,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="80dp"
-        android:layout_marginTop="384dp"
+        android:layout_marginTop="420dp"
         android:src="@drawable/pair_to_device"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -40,19 +40,9 @@
         android:id="@+id/begin_test_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="79dp"
-        android:layout_marginTop="441dp"
+        android:layout_marginStart="76dp"
+        android:layout_marginTop="476dp"
         android:src="@drawable/begin_test"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <ImageView
-        android:id="@+id/view_prev_res_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="79dp"
-        android:layout_marginTop="509dp"
-        android:src="@drawable/view_prev_res"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -61,20 +51,20 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="80dp"
-        android:layout_marginTop="573dp"
+        android:layout_marginTop="608dp"
         android:src="@drawable/contact_support"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="0.016"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
-        android:id="@+id/settings_cog"
+        android:id="@+id/view_prev_res_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="324dp"
-        android:layout_marginTop="8dp"
-        android:src="@drawable/settings_cog"
+        android:layout_marginStart="76dp"
+        android:layout_marginTop="544dp"
+        android:src="@drawable/view_prev_res"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -82,9 +72,29 @@
         android:id="@+id/home_logo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="71dp"
+        android:layout_marginTop="96dp"
         android:src="@drawable/emblem"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/logout"
+        android:layout_width="59dp"
+        android:layout_height="62dp"
+        android:layout_marginStart="308dp"
+        android:layout_marginTop="26dp"
+        android:src="@drawable/logout_btn"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/about"
+        android:layout_width="297dp"
+        android:layout_height="57dp"
+        android:layout_marginStart="61dp"
+        android:layout_marginTop="672dp"
+        android:src="@drawable/group_15"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

@@ -1,15 +1,17 @@
 package com.example.respiratorapp;
 
 import android.app.Activity;
-import android.bluetooth.BluetoothGattDescriptor;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.text.method.ScrollingMovementMethod;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.style.StyleSpan;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -22,24 +24,38 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import java.io.IOException;
 
+/**
+ * Retrieves saved biometric samples from the BleService computes the risk assessment,
+ * and displays the results to the user.
+ */
 public class RiskAssessmentActivity extends AppCompatActivity {
 
+    /**
+     * Logging and BLE related variables.
+     */
     private static final int NUM_MEASUREMENTS = 100;
-    private static final String LOGGER_INFO = "RiskAssessmentActivity";
+    private static final String LOGGER_INFO = "RISK";
     private BleService ble_svc;
     private final Activity activity = this;
     private RespiratoryUser user;
-    private String info = "";
-    ImageView export, home;
-    TextView riskText;
-    TextView meansText;
-    TestResults test;
-    int hrAvg, rrAvg, b02Avg;
-    TestResults.HR_RiskAssessment hrRisk;
-    TestResults.RR_RiskAssessment rrRisk;
-    TestResults.B02_RiskAssessment b02Risk;
-    double[][] hrMeas, rrMeas, b02Meas;
-    TestResults.RiskAssessment riskAssessment;
+
+    /**
+     * Various items on the screen.
+     */
+    private ImageView export, home ,slider1, slider2,
+            slider3, slider4, slider5, slider6, slider7,slider8,slider9;
+    private TextView meansText;
+
+    /**
+     * Test Result information.
+     */
+    private TestResults test;
+    private int hrAvg, rrAvg, b02Avg;
+    private TestResults.HR_RiskAssessment hrRisk;
+    private TestResults.RR_RiskAssessment rrRisk;
+    private TestResults.B02_RiskAssessment b02Risk;
+    private double[][] hrMeas, rrMeas, b02Meas;
+    private TestResults.RiskAssessment riskAssessment;
 
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -52,49 +68,66 @@ public class RiskAssessmentActivity extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-
-        Log.i(LOGGER_INFO, "REACHED");
+        setContentView(R.layout.activity_riskassessment);
+        findSliders();
         Intent userServiceIntent = new Intent(activity, UserService.class);
         bindService(userServiceIntent, userServiceConnection, Context.BIND_AUTO_CREATE);
-
     }
 
+    /**
+     * @brief Helper method used to initialize elements on layout.
+     */
+    private void findSliders() {
+        export = (ImageView) findViewById(R.id.export_res);
+        home = (ImageView) findViewById(R.id.home);
+        slider1 = (ImageView) findViewById(R.id.slider1);
+        slider2 = (ImageView) findViewById(R.id.slider2);
+        slider3 = (ImageView) findViewById(R.id.slider3);
+        slider4 = (ImageView) findViewById(R.id.slider4);
+        slider5 = (ImageView) findViewById(R.id.slider5);
+        slider6 = (ImageView) findViewById(R.id.slider6);
+        slider7 = (ImageView) findViewById(R.id.slider7);
+        slider8 = (ImageView) findViewById(R.id.slider8);
+        slider9 = (ImageView) findViewById(R.id.slider9);
+        meansText = (TextView) findViewById(R.id.textView);
+    }
+
+    /**
+     * @brief Helper method used to update the layout after the test has been completed.
+     */
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    protected void initListeners() {
-        ImageView export = (ImageView) findViewById(R.id.export_res);
-        ImageView home = (ImageView) findViewById(R.id.home);
-        riskText = (TextView) findViewById(R.id.textViewRiskAssessment);
-        meansText = (TextView) findViewById(R.id.textViewThisMeans);
-        meansText.setMovementMethod(new ScrollingMovementMethod());
+    protected void displayResults() {
+
         if (hrRisk == TestResults.HR_RiskAssessment.HIGH || rrRisk == TestResults.RR_RiskAssessment.HIGH || b02Risk == TestResults.B02_RiskAssessment.HIGH) {
-            riskText.setText("HIGH");
             riskAssessment = TestResults.RiskAssessment.HIGH;
+            SpannableString s = new SpannableString("Please Consult a Physician.");
+            StyleSpan span = new StyleSpan(Typeface.BOLD);
+            s.setSpan(span, 0, s.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            meansText.setText(s);
         }
         else {
-            riskText.setText("LOW");
             riskAssessment = TestResults.RiskAssessment.LOW;
+            SpannableString s = new SpannableString("You're all good!");
+            StyleSpan span = new StyleSpan(Typeface.BOLD);
+            s.setSpan(span, 0, s.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            meansText.setText(s);
         }
-        meansText.setText(info);
 
-
-        export.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(RiskAssessmentActivity.this, HomeActivity.class);
-                startActivity(intent);
-            }
+        export.setOnClickListener(view -> {
+            Intent intent = new Intent(RiskAssessmentActivity.this, HomeActivity.class);
+            startActivity(intent);
         });
 
-        home.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(RiskAssessmentActivity.this, HomeActivity.class);
-                startActivity(intent);
-            }
+        home.setOnClickListener(view -> {
+            Intent intent = new Intent(RiskAssessmentActivity.this, HomeActivity.class);
+            startActivity(intent);
         });
     }
 
-    private ServiceConnection connection = new ServiceConnection() {
+    /**
+     * BleService connection callback functions.
+     */
+    private final ServiceConnection connection = new ServiceConnection() {
 
         @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
         @Override
@@ -113,9 +146,12 @@ public class RiskAssessmentActivity extends AppCompatActivity {
         }
     };
 
+    /**
+     * Runs algorithms designed by the BioE team.
+     */
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private void runTest() {
-
+        Log.i(LOGGER_INFO, "Running tests.");
         // retrieve measurement data from BleService.
         hrMeas = ble_svc.getHRMeasurement();
         rrMeas = ble_svc.getRRMeasurement();
@@ -124,8 +160,8 @@ public class RiskAssessmentActivity extends AppCompatActivity {
         calculateB02Risk();
         calculateRrRisk();
 
-        setContentView(R.layout.activity_riskassessment);
-        initListeners();
+        // display results to user.
+        displayResults();
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             test = new TestResults(hrAvg,rrAvg,b02Avg,riskAssessment,hrRisk,rrRisk,b02Risk );
@@ -137,12 +173,16 @@ public class RiskAssessmentActivity extends AppCompatActivity {
          try {
          user.saveUser(this);
          } catch (IOException e) {
-         Log.i("RISK_ASSESSMENT", "Failed to save user.");
+         Log.i(LOGGER_INFO, "Failed to save user.");
          }
 
+        Log.i(LOGGER_INFO,"Test complete and results successfully saved.");
     }
 
-    private ServiceConnection userServiceConnection = new ServiceConnection() {
+    /**
+     * UserService callback functions.
+     */
+    private final ServiceConnection userServiceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             UserService.UserServiceBinder binder = (UserService.UserServiceBinder) service;
@@ -161,19 +201,22 @@ public class RiskAssessmentActivity extends AppCompatActivity {
         }
     };
 
+    /**
+     * Implementation of Heart Rate Risk algorithm.
+     */
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private void calculateHrRisk() {
         int upperThreshold = 0, lowerThreshold = 0;
         double sum = 0;
         for (int i = 0; i < NUM_MEASUREMENTS; i++) {
-
             double heartRate = hrMeas[i][1];
             sum+=heartRate;
             // classify heart rate threshold based on age.
             if (user.getAge() > 40) {
                 if (user.getAge() > 60) {
                     if (user.getAge() > 80) {
-
+                        lowerThreshold = 45;
+                        upperThreshold = 95;
                     } else {
                         upperThreshold = 100;
                         lowerThreshold = 60;
@@ -190,21 +233,25 @@ public class RiskAssessmentActivity extends AppCompatActivity {
             // determine risk
             if (lowerThreshold < heartRate && heartRate < upperThreshold) {
                 // normal
-                hrRisk = TestResults.HR_RiskAssessment.HIGH;
+                hrRisk = TestResults.HR_RiskAssessment.LOW;
             } else {
                 //abnormal
-                hrRisk = TestResults.HR_RiskAssessment.LOW;
+                hrRisk = TestResults.HR_RiskAssessment.HIGH;
             }
         }
         // compute average.
         hrAvg = (int) (sum / NUM_MEASUREMENTS);
-        info += "Your heart rate is between " + lowerThreshold +" and "+ upperThreshold + ". This is "+ hrRisk.toString() + " risk for your age.\n\n";
         if (hrRisk == TestResults.HR_RiskAssessment.HIGH) {
-            info+= "Please consult a physician.\n\n";
+            slider3.setVisibility(View.VISIBLE);
+        } else {
+            slider1.setVisibility(View.VISIBLE);
         }
 
     }
 
+    /**
+     * Implementation of Respiratory Rate Risk algorithm.
+     */
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private void calculateRrRisk() {
         double sum = 0;
@@ -224,20 +271,23 @@ public class RiskAssessmentActivity extends AppCompatActivity {
             }
 
             // classify as continuous or discontinuous
+            // ten consecutive zero's implies that there were minimal readings for at least 100 ms
             if (consecutiveZeros == 10) {
                 continuous = false;
                 consecutiveZeros = 0;
             }
         }
         if (rrRisk == TestResults.RR_RiskAssessment.LOW) {
-            info += "Your breathing frequencies are between " + 60 + " and "+600+" hz." +" You are at " + rrRisk.toString() + " respiratory risk.\n\n";
+           slider7.setVisibility(View.VISIBLE);
         } else {
-            info += "Your breathing frequencies are above " + 600+" hz." + " You are at " + rrRisk.toString() + " respiratory risk.\n\n";
-            info += "You may be at risk for COPD or chronic bronchitis. Please consult a physician.\n\n";
+            slider9.setVisibility(View.VISIBLE);
         }
         rrAvg = (int) (sum/NUM_MEASUREMENTS);
     }
 
+    /**
+     * Implementation of Blood Oxygen Risk algorithm.
+     */
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private void calculateB02Risk() {
         double sum = 0;
@@ -245,17 +295,18 @@ public class RiskAssessmentActivity extends AppCompatActivity {
             double b02 = b02Meas[i][1];
             sum+=b02;
             if (b02 <= 89) {
+                // high risk.
                 b02Risk = TestResults.B02_RiskAssessment.HIGH;
             }
             else if (b02>=95) {
+                // low risk.
                 b02Risk = TestResults.B02_RiskAssessment.LOW;
             }
         }
         if (b02Risk == TestResults.B02_RiskAssessment.LOW) {
-            info += "Your blood oxygen is above " + 94+". This is "+ b02Risk.toString() + " risk.\n\n";
+           slider4.setVisibility(View.VISIBLE);
         } else {
-            info += "Your blood oxygen is less than " + 90+". This is "+ b02Risk.toString() + " risk.\n\n";
-            info += "You may be at risk for Hypoxemia. Please consult a physician.\n\n";
+            slider6.setVisibility(View.VISIBLE);
         }
         b02Avg = (int) (sum/NUM_MEASUREMENTS);
 
