@@ -25,12 +25,9 @@ public class AboutActivity extends AppCompatActivity {
         setContentView(R.layout.activity_about);
 
         ImageView home = (ImageView) findViewById(R.id.home);
-        home.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(AboutActivity.this, HomeActivity.class);
-                startActivity(intent);
-            }
+        home.setOnClickListener(v -> {
+            Intent intent = new Intent(AboutActivity.this, HomeActivity.class);
+            startActivity(intent);
         });
 
     }

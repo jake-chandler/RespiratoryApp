@@ -1,33 +1,18 @@
 package com.example.respiratorapp;
 
 import android.app.Activity;
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothGatt;
-import android.bluetooth.BluetoothGattCallback;
-import android.bluetooth.BluetoothGattCharacteristic;
-import android.bluetooth.BluetoothGattService;
-import android.bluetooth.BluetoothManager;
-import android.bluetooth.le.BluetoothLeScanner;
-import android.bluetooth.le.ScanCallback;
-import android.bluetooth.le.ScanResult;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.IBinder;
-import android.os.Parcelable;
+import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
-import android.util.Log;
 
 import androidx.annotation.RequiresApi;
-
-import java.util.List;
-import java.util.UUID;
 
 /**
  * Represents the BLE pairing process. Attempts to pair to the MC.

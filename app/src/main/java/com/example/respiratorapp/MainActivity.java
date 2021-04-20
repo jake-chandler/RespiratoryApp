@@ -18,9 +18,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        if (!getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {
-            // handle this later
-        }
+        getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE);// handle this later
         super.onCreate(savedInstanceState);
 
 

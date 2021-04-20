@@ -21,26 +21,13 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
 
-import com.jjoe64.graphview.series.DataPoint;
-
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
-import java.util.Calendar;
 import java.util.List;
 
 @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 
-/**
- * Represents a background service that manages Bluetooth Low Energy connection
- * with the UGA Sensor device. Provides an interface for retrieving BLE characteristic(s) values of
- * the offered BLE services, and storing measurements collected.
- *
- * @note This service does not offer measurement collection. Rather, it offers a place to store measurements.
- *       Measurement collection is implemented in each TestActivity.
- * @note This service should be started in the PairingActivity class
- *       and terminated in the TestingActivity class.
- */
 public class BleService extends Service {
     /**
      * Request code for enabling bluetooth services.
@@ -71,21 +58,6 @@ public class BleService extends Service {
      * Time to scan for device in milliseconds.
      */
     private static final long SCAN_TIME = 5000;
-
-    /**
-     * Time to sample measurement values.
-     */
-    private static final long SAMPLE_TIME = 10000;
-
-    /**
-     * The number of measurements to collect.
-     */
-    private static final int NUM_MEASUREMENTS = 100;
-
-    /**
-     * BLE Manager for adapter retrieval.
-     */
-    private BluetoothManager bleManager;
 
     /**
      * BLE Adapter for determining if bluetooth is enabled.
@@ -141,6 +113,11 @@ public class BleService extends Service {
      * Measurements to be stored.
      */
     private double[][] rrMeasurements, b02Measurements, hrMeasurements;
+
+    public BleService(int bo2Val) {
+        this.bo2Val = bo2Val;
+    }
+
     /**
      * Setter for the list of heart rate measurements.
      * @param arr The list of heart rate measurements.
@@ -296,7 +273,7 @@ public class BleService extends Service {
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        bleManager = activity.getSystemService(BluetoothManager.class);
+        BluetoothManager bleManager = activity.getSystemService(BluetoothManager.class);
 
         if (bleManager != null) {
             bleAdapter = bleManager.getAdapter();
@@ -330,12 +307,9 @@ public class BleService extends Service {
                 if (bleGatt.connect()) {
                     Log.i(LOGGER_INFO, "Connected to GATT Server successfully.");
                     devicePaired = true;
-                    handler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            boolean state = bleGatt.discoverServices();
-                            Log.i(LOGGER_INFO, "State Service Discovered: " + state);
-                        }
+                    handler.postDelayed(() -> {
+                        boolean state = bleGatt.discoverServices();
+                        Log.i(LOGGER_INFO, "State Service Discovered: " + state);
                     }, 3000);
 
                 }
@@ -391,21 +365,15 @@ public class BleService extends Service {
             List<BluetoothGattCharacteristic> characteristics = service.getCharacteristics();
             for (BluetoothGattCharacteristic characteristic : characteristics) {
                 if (characteristic.getUuid().toString().equals(UUID_HR)) {
-                    BluetoothGattDescriptor descriptor =
-                            characteristic.getDescriptor(characteristic.getDescriptors().get(0).getUuid());
-                    hrDescriptor = descriptor;
+                    hrDescriptor = characteristic.getDescriptor(characteristic.getDescriptors().get(0).getUuid());
                 }
                 if (characteristic.getUuid().toString().equals(UUID_RR)) {
                     bleGatt.setCharacteristicNotification(characteristic, true);
-                    BluetoothGattDescriptor descriptor =
-                            characteristic.getDescriptor(characteristic.getDescriptors().get(0).getUuid());
-                    rrDescriptor = descriptor;
+                    rrDescriptor = characteristic.getDescriptor(characteristic.getDescriptors().get(0).getUuid());
                 }
                 if (characteristic.getUuid().toString().equals(UUID_BO2)) {
                     bleGatt.setCharacteristicNotification(characteristic, true);
-                    BluetoothGattDescriptor descriptor =
-                            characteristic.getDescriptor(characteristic.getDescriptors().get(0).getUuid());
-                    bo2Descriptor = descriptor;
+                    bo2Descriptor = characteristic.getDescriptor(characteristic.getDescriptors().get(0).getUuid());
                 }
             }
         }

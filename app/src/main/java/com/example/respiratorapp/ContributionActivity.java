@@ -13,11 +13,6 @@ import android.widget.ImageView;
  */
 public class ContributionActivity extends Activity {
 
-    /**
-     * Buttons
-     */
-    private ImageView homeButton;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,14 +28,11 @@ public class ContributionActivity extends Activity {
     }
 
     protected void initListeners() {
-        homeButton = (ImageView) findViewById(R.id.home);
-        homeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            //allows the user to move bac to the home screen
-            public void onClick(View view) {
-                Intent intent = new Intent(ContributionActivity.this, HomeActivity.class);
-                startActivity(intent);
-            }
+        ImageView homeButton = (ImageView) findViewById(R.id.home);
+        //allows the user to move bac to the home screen
+        homeButton.setOnClickListener(view -> {
+            Intent intent = new Intent(ContributionActivity.this, HomeActivity.class);
+            startActivity(intent);
         });
     }
 }

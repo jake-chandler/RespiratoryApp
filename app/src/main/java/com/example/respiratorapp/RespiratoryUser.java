@@ -2,7 +2,6 @@ package com.example.respiratorapp;
 
 import android.content.Context;
 import android.os.Build;
-import android.util.Log;
 
 import androidx.annotation.RequiresApi;
 
@@ -13,6 +12,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -143,9 +143,7 @@ public class RespiratoryUser {
             delim = "[ ,]+";
             info = testListString.split(delim);
 
-            for (int i = 0; i < info.length; i++) {
-                testResultsList.add(info[i]);
-            }
+            testResultsList.addAll(Arrays.asList(info));
         }
 
     }
@@ -161,8 +159,6 @@ public class RespiratoryUser {
         String fileContents = this.toString();
         try (FileOutputStream fos = context.openFileOutput(filename, Context.MODE_PRIVATE)) {
             fos.write(fileContents.getBytes());
-        } catch (IOException e) {
-            throw e;
         }
     }
 
@@ -213,15 +209,6 @@ public class RespiratoryUser {
             return username + " " + password + " " + name + " " + sex +
                     " " + activityLevel + " " + age + " " + height + " " + weight + " " + testResultsList;
         }
-    }
-
-    /**
-     * Getters for class fields.
-     *
-     * @return The corresponding field.
-     */
-    public String getUsername() {
-        return username;
     }
 
     public String getPassword() {

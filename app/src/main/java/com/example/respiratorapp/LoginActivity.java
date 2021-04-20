@@ -26,6 +26,7 @@ public class LoginActivity extends AppCompatActivity {
     private EditText username;
     private EditText password;
     private RespiratoryUser user;
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,33 +42,31 @@ public class LoginActivity extends AppCompatActivity {
         initListeners();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     private void initListeners() {
         ImageView submitButton;
         submitButton = (ImageView) findViewById(R.id.submit);
-        submitButton.setOnClickListener(new View.OnClickListener() {
-            @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-            public void onClick(View view) {
-                username = (EditText) findViewById(R.id.editTextUsername);
-                password = (EditText) findViewById(R.id.editTextPassword);
-                String usernameValue = username.getText().toString();
-                String passwordValue = password.getText().toString();
-                try {
-                    String RespiratoryUserString = RespiratoryUser.retrieveUser(getApplicationContext(), usernameValue);
-                    user = new RespiratoryUser( RespiratoryUserString );
-                    if (passwordValue.equals(user.getPassword())) {
-                        Intent userServiceIntent = new Intent(LoginActivity.this, UserService.class);
-                        bindService(userServiceIntent, connection, Context.BIND_AUTO_CREATE);
-                    }
-                    else{
-                        Log.i("LOGIN", "wrong password");
-                    }
-                } catch (FileNotFoundException e) {
-                    Log.i("LOGIN", "user not found");
+        submitButton.setOnClickListener(view -> {
+            username = (EditText) findViewById(R.id.editTextUsername);
+            password = (EditText) findViewById(R.id.editTextPassword);
+            String usernameValue = username.getText().toString();
+            String passwordValue = password.getText().toString();
+            try {
+                String RespiratoryUserString = RespiratoryUser.retrieveUser(getApplicationContext(), usernameValue);
+                user = new RespiratoryUser( RespiratoryUserString );
+                if (passwordValue.equals(user.getPassword())) {
+                    Intent userServiceIntent = new Intent(LoginActivity.this, UserService.class);
+                    bindService(userServiceIntent, connection, Context.BIND_AUTO_CREATE);
                 }
+                else{
+                    Log.i("LOGIN", "wrong password");
+                }
+            } catch (FileNotFoundException e) {
+                Log.i("LOGIN", "user not found");
             }
         });
     }
-    private ServiceConnection connection = new ServiceConnection() {
+    private final ServiceConnection connection = new ServiceConnection() {
 
         @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
         @Override

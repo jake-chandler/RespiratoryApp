@@ -1,6 +1,5 @@
 package com.example.respiratorapp;
 
-import android.app.Activity;
 import android.bluetooth.BluetoothGattDescriptor;
 import android.content.ComponentName;
 import android.content.Context;
@@ -8,10 +7,8 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
-import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
@@ -24,9 +21,10 @@ import androidx.appcompat.app.AppCompatActivity;
  */
 public class PairedActivity extends AppCompatActivity {
 
-    private ImageView home_btn;
     BleService svc;
-    Activity activity = this;
+
+    public PairedActivity() {
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,19 +43,16 @@ public class PairedActivity extends AppCompatActivity {
 
         initListeners();
     }
-    private ImageView homeButton;
+
     protected void initListeners() {
-        homeButton = (ImageView) findViewById(R.id.home);
-        homeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(PairedActivity.this, HomeActivity.class);
-                startActivity(intent);
-            }
+        ImageView homeButton = (ImageView) findViewById(R.id.home);
+        homeButton.setOnClickListener(view -> {
+            Intent intent = new Intent(PairedActivity.this, HomeActivity.class);
+            startActivity(intent);
         });
     }
 
-    private ServiceConnection connection = new ServiceConnection() {
+    private final ServiceConnection connection = new ServiceConnection() {
 
         @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
         @Override

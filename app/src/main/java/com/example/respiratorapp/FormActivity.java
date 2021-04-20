@@ -39,9 +39,7 @@ public class FormActivity extends AppCompatActivity {
     private Spinner activityLevel;
     private EditText username;
     private EditText password;
-    private ImageView submitButton;
-    private Activity activity = this;
-    private UserService userService;
+    private final Activity activity = this;
     private RespiratoryUser user;
 
     @Override
@@ -76,60 +74,55 @@ public class FormActivity extends AppCompatActivity {
         ArrayAdapter<String> sexesAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, sexes);
         activityLevel.setAdapter(activitiesAdapter);
         sex.setAdapter(sexesAdapter);
-        submitButton = (ImageView) findViewById(R.id.submit);
+        ImageView submitButton = (ImageView) findViewById(R.id.submit);
 
-        submitButton.setOnClickListener(new View.OnClickListener() {
+        submitButton.setOnClickListener(view -> {
 
-            @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-            @Override
-            public void onClick(View view) {
+            String nameValue = name.getText().toString();
+            String usernameValue = username.getText().toString();
+            String passwordValue = password.getText().toString();
+            int ageValue = Integer.parseInt(age.getEditableText().toString());
+            int heightValue = Integer.parseInt(height.getEditableText().toString());
+            int weightValue = Integer.parseInt(weight.getEditableText().toString());
 
-                String nameValue = name.getText().toString();
-                String usernameValue = username.getText().toString();
-                String passwordValue = password.getText().toString();
-                int ageValue = Integer.parseInt(age.getEditableText().toString());
-                int heightValue = Integer.parseInt(height.getEditableText().toString());
-                int weightValue = Integer.parseInt(weight.getEditableText().toString());
-
-                //sets the selected drop down value to equal the switch for sex
-                RespiratoryUser.Sex sexValue;
-                if (sex.getSelectedItem().toString() == "MALE") {
-                    sexValue = RespiratoryUser.Sex.MALE;
-                } else {
-                    sexValue = RespiratoryUser.Sex.FEMALE;
-                }
-
-                //sets the selected drop down value to equal the switch for ActivityLevel
-                RespiratoryUser.ActivityLevel activityLevelValue;
-                if (activityLevel.getSelectedItem().toString() == "LOW") {
-                    activityLevelValue = RespiratoryUser.ActivityLevel.LOW;
-                } else if (activityLevel.getSelectedItem().toString() == "MODERATE") {
-                    activityLevelValue = RespiratoryUser.ActivityLevel.MODERATE;
-                } else {
-                    activityLevelValue = RespiratoryUser.ActivityLevel.HIGH;
-                }
-
-                //initializes a user to have the contents of the form page
-                user = new RespiratoryUser(usernameValue, passwordValue, nameValue,
-                        sexValue, activityLevelValue, ageValue, heightValue, weightValue);
-
-                Intent userServiceIntent = new Intent(activity, UserService.class);
-                bindService(userServiceIntent, connection, Context.BIND_AUTO_CREATE);
-
-                try {
-                    user.saveUser(getApplicationContext());
-                } catch (IOException e) {
-                    Log.i("FORM", "Failed to save this session's user."); //catches an exception if the form is not filled properly
-                }
-
-                Intent intent = new Intent(FormActivity.this, HomeActivity.class);
-
-                startActivity(intent);
+            //sets the selected drop down value to equal the switch for sex
+            RespiratoryUser.Sex sexValue;
+            if (sex.getSelectedItem().toString().equals("MALE")) {
+                sexValue = RespiratoryUser.Sex.MALE;
+            } else {
+                sexValue = RespiratoryUser.Sex.FEMALE;
             }
+
+            //sets the selected drop down value to equal the switch for ActivityLevel
+            RespiratoryUser.ActivityLevel activityLevelValue;
+            if (activityLevel.getSelectedItem().toString().equals("LOW")) {
+                activityLevelValue = RespiratoryUser.ActivityLevel.LOW;
+            } else if (activityLevel.getSelectedItem().toString().equals("MODERATE")) {
+                activityLevelValue = RespiratoryUser.ActivityLevel.MODERATE;
+            } else {
+                activityLevelValue = RespiratoryUser.ActivityLevel.HIGH;
+            }
+
+            //initializes a user to have the contents of the form page
+            user = new RespiratoryUser(usernameValue, passwordValue, nameValue,
+                    sexValue, activityLevelValue, ageValue, heightValue, weightValue);
+
+            Intent userServiceIntent = new Intent(activity, UserService.class);
+            bindService(userServiceIntent, connection, Context.BIND_AUTO_CREATE);
+
+            try {
+                user.saveUser(getApplicationContext());
+            } catch (IOException e) {
+                Log.i("FORM", "Failed to save this session's user."); //catches an exception if the form is not filled properly
+            }
+
+            Intent intent = new Intent(FormActivity.this, HomeActivity.class);
+
+            startActivity(intent);
         });
     }
 
-    private ServiceConnection connection = new ServiceConnection() {
+    private final ServiceConnection connection = new ServiceConnection() {
 
         @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
         @Override
@@ -138,7 +131,7 @@ public class FormActivity extends AppCompatActivity {
             UserService.UserServiceBinder binder = (UserService.UserServiceBinder) service;
 
             // register this user as this session's user.
-            userService = binder.getService();
+            UserService userService = binder.getService();
             userService.registerUser(user);
 
         }
