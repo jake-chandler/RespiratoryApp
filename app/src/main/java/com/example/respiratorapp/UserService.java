@@ -15,7 +15,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
 /**
- * @class Stores the user of this session.
+ * Stores the user of this session.
  */
 public class UserService extends Service {
 

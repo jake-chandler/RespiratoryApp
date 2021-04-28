@@ -17,7 +17,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * @class Represents a typical user of the UGA Respiratory Risk Assessment App.
+ * Represents a typical user of the UGA Respiratory Risk Assessment App.
  */
 public class RespiratoryUser {
 

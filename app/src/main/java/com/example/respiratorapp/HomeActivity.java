@@ -18,7 +18,7 @@ import android.widget.ImageView;
 import androidx.annotation.RequiresApi;
 
 /**
- * @brief Represents the home screen of our application
+ * Represents the home screen of our application
  */
 public class HomeActivity extends Activity {
 

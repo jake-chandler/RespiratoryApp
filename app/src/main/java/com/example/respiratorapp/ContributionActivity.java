@@ -9,7 +9,7 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 
 /**
- * @brief Represents the contribution screen of our application
+ * Represents the contribution screen of our application
  */
 public class ContributionActivity extends Activity {
 

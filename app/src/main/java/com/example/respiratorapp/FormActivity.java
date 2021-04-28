@@ -24,7 +24,7 @@ import android.widget.Spinner;
 import java.io.IOException;
 
 /**
- * @brief Represents the form screen of our application for new users.
+ * Represents the form screen of our application for new users.
  */
 public class FormActivity extends AppCompatActivity {
 

@@ -15,7 +15,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Random;
 
 /**
- * @class Represents results from running a test.
+ * Represents results from running a test.
  */
 public class TestResults {
 

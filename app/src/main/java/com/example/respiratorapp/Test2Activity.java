@@ -29,7 +29,7 @@ import java.sql.Timestamp;
 import java.util.Calendar;
 
 /**
- * @brief Represents the BO2 test screen of our application
+ * Represents the BO2 test screen of our application
  */
 public class Test2Activity extends AppCompatActivity {
 

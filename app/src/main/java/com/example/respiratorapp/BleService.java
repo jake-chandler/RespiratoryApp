@@ -28,6 +28,9 @@ import java.util.List;
 
 @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 
+/**
+ * Handles all Ble related functionality.
+ */
 public class BleService extends Service {
     /**
      * Request code for enabling bluetooth services.
@@ -114,9 +117,6 @@ public class BleService extends Service {
      */
     private double[][] rrMeasurements, b02Measurements, hrMeasurements;
 
-    public BleService(int bo2Val) {
-        this.bo2Val = bo2Val;
-    }
 
     /**
      * Setter for the list of heart rate measurements.
@@ -424,7 +424,7 @@ public class BleService extends Service {
         public void onScanResult(int callbackType, ScanResult result) {
             super.onScanResult(callbackType, result);
 
-            if (!(result.getDevice().getName() == null) && result.getDevice().getName().equals(DEVICE_NAME)) {
+            if (!deviceFound && !(result.getDevice().getName() == null) && result.getDevice().getName().equals(DEVICE_NAME)) {
                 bleDevice = result.getDevice();
                 deviceFound = true;
                 Log.i(LOGGER_INFO, "Device " + result.getDevice().getName() + " has been found.");

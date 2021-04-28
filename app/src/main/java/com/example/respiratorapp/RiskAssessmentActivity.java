@@ -89,7 +89,7 @@ public class RiskAssessmentActivity extends AppCompatActivity {
         slider7 = (ImageView) findViewById(R.id.slider7);
         slider8 = (ImageView) findViewById(R.id.slider8);
         slider9 = (ImageView) findViewById(R.id.slider9);
-        meansText = (TextView) findViewById(R.id.textView);
+        meansText = (TextView) findViewById(R.id.textView2);
     }
 
     /**
@@ -100,16 +100,12 @@ public class RiskAssessmentActivity extends AppCompatActivity {
 
         if (hrRisk == TestResults.HR_RiskAssessment.HIGH || rrRisk == TestResults.RR_RiskAssessment.HIGH || b02Risk == TestResults.B02_RiskAssessment.HIGH) {
             riskAssessment = TestResults.RiskAssessment.HIGH;
-            SpannableString s = new SpannableString("Please Consult a Physician.");
-            StyleSpan span = new StyleSpan(Typeface.BOLD);
-            s.setSpan(span, 0, s.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            String s = "Please Consult a Physician.";
             meansText.setText(s);
         }
         else {
             riskAssessment = TestResults.RiskAssessment.LOW;
-            SpannableString s = new SpannableString("You're all good!");
-            StyleSpan span = new StyleSpan(Typeface.BOLD);
-            s.setSpan(span, 0, s.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            String s = "You're all good!";
             meansText.setText(s);
         }
 

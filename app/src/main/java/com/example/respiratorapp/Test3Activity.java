@@ -29,6 +29,9 @@ import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Random;
 
+/**
+ * B02 Test Screen.
+ */
 public class Test3Activity extends AppCompatActivity {
 
     private static final int NUM_MEASUREMENTS = 100;
